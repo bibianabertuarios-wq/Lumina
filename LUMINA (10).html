@@ -1,0 +1,1928 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lumina - Wellness para Mujeres en Transición</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Lato', sans-serif; }
+        h1, h2, h3 { font-family: 'Playfair Display', serif; }
+        .meal-image { width: 100%; height: 180px; background-size: contain; background-repeat: no-repeat; background-position: center; border-radius: 12px; background-color: #f5f5f5; }
+        .glass-effect { backdrop-filter: blur(10px); background: rgba(255, 255, 255, 0.8); }
+        .gradient-text { background: linear-gradient(135deg, #9333ea 0%, #ec4899 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .elegant-button { transition: all 0.3s ease; }
+        .elegant-button:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(147, 51, 234, 0.2); }
+        img { object-fit: cover; object-position: center; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // SafeImg: component que maneja imágenes con placeholders SVG
+        const SafeImg = ({ src, alt, className }) => {
+            const placeholder = 'data:image/svg+xml;utf8,' + encodeURIComponent(
+                `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400"><rect width="100%" height="100%" fill="#e5e7eb"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="Lato, sans-serif" font-size="20" fill="#9ca3af">Imagen no disponible</text></svg>`
+            );
+            const [srcState, setSrcState] = useState(src);
+            useEffect(() => setSrcState(src), [src]);
+            return (
+                <img 
+                    src={srcState} 
+                    alt={alt} 
+                    className={className || 'w-full h-64 object-cover rounded-lg'}
+                    onError={(e) => {
+                        if (e.target.src !== placeholder) {
+                            e.target.src = placeholder;
+                        }
+                    }}
+                />
+            );
+        };
+
+        const LuminaApp = () => {
+            const [language, setLanguage] = useState('es');
+            const [showWelcome, setShowWelcome] = useState(true);
+
+            const t = {
+                es: {
+                    app_name: 'Lumina',
+                    welcome_title: 'Bienvenida a tu transformación',
+                    welcome_subtitle: '✨ Tu poder está dentro',
+                    welcome_desc: 'Lumina está aquí para acompañarte en tu mejor versión. Este es tu momento de brillar, de sentirte fuerte, de reclamar tu cuerpo y tu vida.',
+                    what_youll_find: 'Qué encontrarás aquí:',
+                    feature_nutrition: 'Nutrición inteligente personalizada según tus condiciones de salud',
+                    feature_exercise: 'Ejercicios adaptados a tu cuerpo y necesidades',
+                    feature_tracking: 'Monitoreo de síntomas para entender tu ciclo personal',
+                    feature_science: 'Ciencia real detrás de cada consejo - sin mitos',
+                    feature_community: 'Comunidad de mujeres que entienden tu experiencia',
+                    feature_wisdom: 'Consejos prácticos y afirmaciones empoderadoras',
+                    empowerment_msg: 'Esta es tu etapa de florecer. De brillar. De reinventarte.',
+                    get_started: 'Comenzar',
+                    language: 'Idioma',
+                    
+                    // Rest of translations
+                    login: 'Iniciar', register: 'Registrar', logout: 'Salir',
+                    username: 'Usuario', password: 'Contraseña', confirm: 'Confirmar',
+                    sign_in: 'Entrar', create_account: 'Crear Cuenta',
+                    my_profiles: 'Mis Perfiles', new_profile: '+ Nuevo Perfil',
+                    profile_name: 'Nombre del Perfil',
+                    dashboard: 'Inicio', nutrition: 'Nutrición', exercise: 'Ejercicio',
+                    symptoms: 'Síntomas', myths: 'Mitos', tips: 'Consejos', community: 'Comunidad',
+                    period: 'Mi Período', resources: 'Talleres & Consultas', medical_consults: 'Consultas Médicas',
+                    welcome: 'Bienvenida', configure: '⚙️ Configurar', weight: 'Peso (kg)',
+                    height: 'Altura (cm)', age: 'Edad', activity: 'Nivel de Actividad',
+                    sedentary: 'Sedentaria', light: 'Ligera', moderate: 'Moderada', active: 'Activa', veryActive: 'Muy Activa',
+                    health_conditions: 'Condiciones de Salud',
+                    breakfast: 'Desayuno', lunch: 'Almuerzo', dinner: 'Cena', snack: 'Snack',
+                    how_you_feel: '¿Cómo te sientes hoy? (0-10)',
+                    record_today: 'Registrar Hoy', save: 'Guardar', cancel: 'Cancelar',
+                    share_story: 'Comparte Tu Historia', story_title: 'Título', story_content: 'Tu historia...',
+                    search_myth: 'Busca...',
+                    myth_evidence: 'Evidencia Científica', myth_practical: 'Acción Práctica',
+                    recipe_ingredients: 'Ingredientes', recipe_steps: 'Pasos de Cocción',
+                    servings: 'Porciones', prep_time: 'Prep', cook_time: 'Cocción',
+                    bmi: 'IMC', tdee: 'TDEE', exercises_week: 'Ejercicios Esta Semana',
+                    symptoms_label: 'Síntomas', sleep: 'Sueño'
+                },
+                en: {
+                    app_name: 'Lumina',
+                    welcome_title: 'Welcome to Your Transformation',
+                    welcome_subtitle: '✨ Your Power is Within',
+                    welcome_desc: 'Lumina is here to accompany you toward your best self. This is your moment to shine, to feel strong, to reclaim your body and your life.',
+                    what_youll_find: 'What you\'ll find here:',
+                    feature_nutrition: 'Smart nutrition personalized to your health conditions',
+                    feature_exercise: 'Exercises adapted to your body and needs',
+                    feature_tracking: 'Symptom monitoring to understand your personal cycle',
+                    feature_science: 'Real science behind every advice - no myths',
+                    feature_community: 'Community of women who understand your experience',
+                    feature_wisdom: 'Practical tips and empowering affirmations',
+                    empowerment_msg: 'This is your time to bloom. To shine. To reinvent yourself.',
+                    get_started: 'Get Started',
+                    language: 'Language',
+                    
+                    // Rest of translations
+                    login: 'Sign In', register: 'Register', logout: 'Exit',
+                    username: 'Username', password: 'Password', confirm: 'Confirm',
+                    sign_in: 'Enter', create_account: 'Create Account',
+                    my_profiles: 'My Profiles', new_profile: '+ New Profile',
+                    profile_name: 'Profile Name',
+                    dashboard: 'Home', nutrition: 'Nutrition', exercise: 'Exercise',
+                    symptoms: 'Symptoms', myths: 'Myths', tips: 'Tips', community: 'Community',
+                    period: 'My Period', resources: 'Workshops & Consults', medical_consults: 'Medical Consults',
+                    welcome: 'Welcome', configure: '⚙️ Configure', weight: 'Weight (kg)',
+                    height: 'Height (cm)', age: 'Age', activity: 'Activity Level',
+                    sedentary: 'Sedentary', light: 'Light', moderate: 'Moderate', active: 'Active', veryActive: 'Very Active',
+                    health_conditions: 'Health Conditions',
+                    breakfast: 'Breakfast', lunch: 'Lunch', dinner: 'Dinner', snack: 'Snack',
+                    how_you_feel: 'How do you feel today? (0-10)',
+                    record_today: 'Record Today', save: 'Save', cancel: 'Cancel',
+                    share_story: 'Share Your Story', story_title: 'Title', story_content: 'Your story...',
+                    search_myth: 'Search...',
+                    myth_evidence: 'Scientific Evidence', myth_practical: 'Practical Action',
+                    recipe_ingredients: 'Ingredients', recipe_steps: 'Cooking Steps',
+                    servings: 'Servings', prep_time: 'Prep', cook_time: 'Cook',
+                    bmi: 'BMI', tdee: 'TDEE', exercises_week: 'Exercises This Week',
+                    symptoms_label: 'Symptoms', sleep: 'Sleep'
+                }
+            };
+
+            const symptomLabels = {
+                hot_flashes: { es: 'Sofocos', en: 'Hot Flashes' },
+                night_sweats: { es: 'Sudores Nocturnos', en: 'Night Sweats' },
+                mood_changes: { es: 'Cambios de Humor', en: 'Mood Changes' },
+                sleep_issues: { es: 'Problemas de Sueño', en: 'Sleep Issues' },
+                joint_pain: { es: 'Dolor Articular', en: 'Joint Pain' },
+                brain_fog: { es: 'Confusión Mental', en: 'Brain Fog' }
+            };
+
+            // AUTH STATE
+            const [isLoggedIn, setIsLoggedIn] = useState(false);
+            const [currentUser, setCurrentUser] = useState(null);
+            const [currentProfile, setCurrentProfile] = useState(null);
+            const [currentPage, setCurrentPage] = useState('dashboard');
+            const [darkMode, setDarkMode] = useState(false);
+            const [loginMode, setLoginMode] = useState('login');
+            const [authError, setAuthError] = useState('');
+            const [loginForm, setLoginForm] = useState({ username: '', password: '' });
+            const [registerForm, setRegisterForm] = useState({ username: '', password: '', confirmPassword: '' });
+            const [profileName, setProfileName] = useState('');
+            const [showNewProfileForm, setShowNewProfileForm] = useState(false);
+
+            // NUTRITION
+            const [showDietSetup, setShowDietSetup] = useState(false);
+            const [dietForm, setDietForm] = useState({
+                weight: 65, height: 165, age: 45, activityLevel: 'moderate',
+                goal: 'maintain', healthConditions: []
+            });
+            const [personalizedMeals, setPersonalizedMeals] = useState([]);
+            const [selectedMeal, setSelectedMeal] = useState(null);
+            const [mealType, setMealType] = useState('breakfast');
+
+            // EXERCISE
+            const [selectedExercise, setSelectedExercise] = useState(null);
+            const [exerciseTracking, setExerciseTracking] = useState({});
+
+            // SYMPTOMS
+            const [symptomValues, setSymptomValues] = useState({
+                hot_flashes: 0, night_sweats: 0, mood_changes: 0,
+                sleep_issues: 0, joint_pain: 0, brain_fog: 0
+            });
+            const [showSymptomLogger, setShowSymptomLogger] = useState(false);
+
+            // COMMUNITY
+            const [showStoryModal, setShowStoryModal] = useState(false);
+            const [storyTitle, setStoryTitle] = useState('');
+            const [storyContent, setStoryContent] = useState('');
+
+            // MYTHS/TIPS
+            const [searchTerm, setSearchTerm] = useState('');
+            const [expandedItem, setExpandedItem] = useState(null);
+
+            // NEW: GDPR & MONETIZATION FEATURES
+            const [showSources, setShowSources] = useState(false);
+            const [showPaywall, setShowPaywall] = useState(false);
+            const [isPro, setIsPro] = useState(localStorage.getItem('luminaPro') === 'true');
+            const [consentGiven, setConsentGiven] = useState(localStorage.getItem('luminaConsent') === 'true');
+
+            // NEW: PERIOD TRACKING
+            const [periodTracking, setPeriodTracking] = useState({});
+            const [selectedPeriodDate, setSelectedPeriodDate] = useState(null);
+            const [periodForm, setPeriodForm] = useState({ 
+                date: new Date().toISOString().split('T')[0],
+                flow: 'moderate', // light, moderate, heavy
+                symptoms: [] 
+            });
+
+            // NEW: MEDICAL CONSULTS
+            const [medicalConsults, setMedicalConsults] = useState([]);
+            const [showConsultForm, setShowConsultForm] = useState(false);
+            const [consultForm, setConsultForm] = useState({
+                date: new Date().toISOString().split('T')[0],
+                doctorName: '',
+                specialty: '',
+                notes: '',
+                nextDate: ''
+            });
+
+            // NEW: WORKSHOPS & RESOURCES
+            const [workshops, setWorkshops] = useState([
+                { id: 1, name_es: 'Yoga para el Bienestar', name_en: 'Yoga for Wellness', date: '2024-12-15', time: '18:00', type: 'webinar', duration: '60 min' },
+                { id: 2, name_es: 'Nutrición y Perimenopausia', name_en: 'Nutrition & Perimenopause', date: '2024-12-22', time: '19:00', type: 'taller', duration: '90 min' },
+                { id: 3, name_es: 'Sueño Reparador', name_en: 'Restorative Sleep', date: '2025-01-10', time: '18:30', type: 'webinar', duration: '45 min' }
+            ]);
+
+            useEffect(() => {
+                loadAuthState();
+            }, []);
+
+            const getAccounts = () => {
+                const accounts = localStorage.getItem('luminaAccounts');
+                return accounts ? JSON.parse(accounts) : {};
+            };
+
+            const saveAccounts = (accounts) => {
+                localStorage.setItem('luminaAccounts', JSON.stringify(accounts));
+            };
+
+            const loadAuthState = () => {
+                const savedUser = localStorage.getItem('luminaUser');
+                const savedProfile = localStorage.getItem('luminaProfile');
+                const savedLang = localStorage.getItem('luminaLang');
+                if (savedLang) setLanguage(savedLang);
+                if (savedUser && savedProfile) {
+                    setCurrentUser(savedUser);
+                    const profile = JSON.parse(savedProfile);
+                    setCurrentProfile(profile);
+                    setDarkMode(profile.darkMode || false);
+                    setDietForm(profile.dietForm || dietForm);
+                    setExerciseTracking(profile.exerciseTracking || {});
+                    setSymptomValues(profile.symptoms || symptomValues);
+                    setShowWelcome(false);
+                    setIsLoggedIn(true);
+                    generateMeals(profile.dietForm || dietForm, profile.dietForm?.healthConditions || []);
+                }
+            };
+
+            const handleLogin = () => {
+                setAuthError('');
+                if (!loginForm.username || !loginForm.password) {
+                    setAuthError(language === 'es' ? 'Completa usuario y contraseña' : 'Complete username and password');
+                    return;
+                }
+                const accounts = getAccounts();
+                const account = accounts[loginForm.username];
+                if (!account || account.password !== loginForm.password) {
+                    setAuthError(language === 'es' ? 'Usuario o contraseña incorrectos' : 'Incorrect credentials');
+                    return;
+                }
+                setCurrentUser(loginForm.username);
+                localStorage.setItem('luminaUser', loginForm.username);
+                localStorage.setItem('luminaLang', language);
+                setShowWelcome(false);
+                setIsLoggedIn(true);
+            };
+
+            const handleRegister = () => {
+                setAuthError('');
+                if (!registerForm.username || !registerForm.password) {
+                    setAuthError(language === 'es' ? 'Completa todos los campos' : 'Complete all fields');
+                    return;
+                }
+                if (registerForm.password !== registerForm.confirmPassword) {
+                    setAuthError(language === 'es' ? 'Las contraseñas no coinciden' : 'Passwords do not match');
+                    return;
+                }
+                const accounts = getAccounts();
+                if (accounts[registerForm.username]) {
+                    setAuthError(language === 'es' ? 'Este usuario ya existe' : 'Username already exists');
+                    return;
+                }
+                accounts[registerForm.username] = { password: registerForm.password, profiles: {} };
+                saveAccounts(accounts);
+                setLoginForm({ username: registerForm.username, password: registerForm.password });
+                setRegisterForm({ username: '', password: '', confirmPassword: '' });
+                setLoginMode('login');
+            };
+
+            const handleLogout = () => {
+                setIsLoggedIn(false);
+                setCurrentUser(null);
+                setCurrentProfile(null);
+                setShowWelcome(true);
+                localStorage.removeItem('luminaUser');
+                localStorage.removeItem('luminaProfile');
+            };
+
+            const createNewProfile = () => {
+                if (!profileName.trim()) return;
+                const accounts = getAccounts();
+                const profileId = 'p_' + Date.now();
+                const newProfile = {
+                    id: profileId, name: profileName, darkMode: false,
+                    dietForm, symptoms: symptomValues, exerciseTracking: {}
+                };
+                accounts[currentUser].profiles[profileId] = newProfile;
+                saveAccounts(accounts);
+                setCurrentProfile(newProfile);
+                localStorage.setItem('luminaProfile', JSON.stringify(newProfile));
+                setProfileName('');
+                setShowNewProfileForm(false);
+                generateMeals(dietForm, []);
+            };
+
+            const selectProfile = (profileId) => {
+                const accounts = getAccounts();
+                const profile = accounts[currentUser].profiles[profileId];
+                setCurrentProfile(profile);
+                setDarkMode(profile.darkMode || false);
+                setDietForm(profile.dietForm || dietForm);
+                setExerciseTracking(profile.exerciseTracking || {});
+                setSymptomValues(profile.symptoms || symptomValues);
+                localStorage.setItem('luminaProfile', JSON.stringify(profile));
+                generateMeals(profile.dietForm || dietForm, profile.dietForm?.healthConditions || []);
+            };
+
+            const updateProfile = (updates) => {
+                const accounts = getAccounts();
+                const updatedProfile = { ...currentProfile, ...updates };
+                accounts[currentUser].profiles[currentProfile.id] = updatedProfile;
+                saveAccounts(accounts);
+                setCurrentProfile(updatedProfile);
+                localStorage.setItem('luminaProfile', JSON.stringify(updatedProfile));
+            };
+
+            // CALCULATIONS
+            const calculateBMI = (w, h) => (w / ((h / 100) ** 2)).toFixed(1);
+            const calculateTDEE = (w, h, a, act) => {
+                const bmr = 655 + (9.6 * w) + (1.8 * h) - (4.7 * a);
+                const mult = { sedentary: 1.2, light: 1.375, moderate: 1.55, active: 1.725, veryActive: 1.9 };
+                return Math.round(bmr * (mult[act] || 1.55));
+            };
+
+            // HEALTH CONDITIONS
+            const healthConditionsList = [
+                { id: 'diabetes', name: 'Diabetes' },
+                { id: 'hypertension', name: 'Hipertensión' },
+                { id: 'cholesterol', name: 'Colesterol Alto' },
+                { id: 'arthritis', name: 'Artritis' },
+                { id: 'thyroid', name: 'Problemas Tiroideos' },
+                { id: 'anemia', name: 'Anemia' },
+                { id: 'celiac', name: 'Celiaquía' },
+                { id: 'heartdisease', name: 'Enfermedad Cardíaca' }
+            ];
+
+            // MEALS WITH REAL IMAGES
+            const mealsData = {
+                breakfast: [
+                    {
+                        name: 'Avena con Berries y Almendras',
+                        emoji: '🥣',
+                        cals: 280, protein: 10, carbs: 45, fat: 8,
+                        servings: 1, prep_time: '5 min', cook_time: '5 min',
+                        ingredients: [
+                            { item: 'Copos de avena', amount: '40g' },
+                            { item: 'Arándanos frescos', amount: '80g' },
+                            { item: 'Almendras fileteadas', amount: '15g' },
+                            { item: 'Miel', amount: '1 cda' },
+                            { item: 'Leche (almendra)', amount: '200ml' },
+                            { item: 'Canela', amount: 'al gusto' }
+                        ],
+                        steps: [
+                            '1. Calienta la leche en una olla hasta que empiece a hervir',
+                            '2. Agrega los copos de avena y revuelve constantemente',
+                            '3. Cocina a fuego bajo por 5 minutos',
+                            '4. Vierte en un tazón, agrega arándanos y almendras',
+                            '5. Rocía miel y canela'
+                        ],
+                        benefits: 'Energía sostenida, antioxidantes',
+                        suitable: ['diabetes', 'arthritis']
+                    },
+                    {
+                        name: 'Huevos Revueltos con Espinaca',
+                        emoji: '🍳',
+                        cals: 220, protein: 18, carbs: 5, fat: 12,
+                        servings: 1, prep_time: '5 min', cook_time: '8 min',
+                        ingredients: [
+                            { item: 'Huevos', amount: '2 unidades' },
+                            { item: 'Espinaca fresca', amount: '100g' },
+                            { item: 'Aceite de oliva', amount: '1 cda' },
+                            { item: 'Sal marina', amount: 'al gusto' },
+                            { item: 'Pimienta negra', amount: 'al gusto' }
+                        ],
+                        steps: [
+                            '1. Calienta el aceite en una sartén',
+                            '2. Agrega espinaca y cocina 2 minutos',
+                            '3. Bate los huevos en un tazón',
+                            '4. Vierte los huevos en la sartén',
+                            '5. Revuelve hasta que estén cocinados'
+                        ],
+                        benefits: 'Proteína, hierro, colina',
+                        suitable: ['anemia']
+                    },
+                    {
+                        name: 'Smoothie Verde Antioxidante',
+                        emoji: '🥤',
+                        cals: 180, protein: 6, carbs: 35, fat: 2,
+                        servings: 1, prep_time: '5 min', cook_time: '0 min',
+                        ingredients: [
+                            { item: 'Espinaca', amount: '100g' },
+                            { item: 'Manzana verde', amount: '1' },
+                            { item: 'Jengibre fresco', amount: '1 cm' },
+                            { item: 'Agua', amount: '250ml' },
+                            { item: 'Hielo', amount: '6 cubos' }
+                        ],
+                        steps: [
+                            '1. Corta la manzana y pela el jengibre',
+                            '2. Agrega todo en la licuadora',
+                            '3. Licúa 45 segundos',
+                            '4. Vierte en un vaso'
+                        ],
+                        benefits: 'Antioxidantes, desintoxicante',
+                        suitable: ['arthritis', 'diabetes']
+                    }
+                ],
+                lunch: [
+                    {
+                        name: 'Pechuga de Pollo Grillada con Quinoa',
+                        emoji: '🍗',
+                        cals: 380, protein: 38, carbs: 42, fat: 8,
+                        servings: 1, prep_time: '10 min', cook_time: '20 min',
+                        ingredients: [
+                            { item: 'Pechuga de pollo', amount: '150g' },
+                            { item: 'Quinoa cruda', amount: '75g' },
+                            { item: 'Brócoli', amount: '150g' },
+                            { item: 'Limón', amount: '1/2' },
+                            { item: 'Aceite de oliva', amount: '1 cda' }
+                        ],
+                        steps: [
+                            '1. Cocina la quinoa en 2 partes de agua por 15 minutos',
+                            '2. Sazona la pechuga con limón, sal y pimienta',
+                            '3. Cocina en sartén a fuego medio 8-10 min por lado',
+                            '4. Cuece el brócoli al vapor 5-7 minutos',
+                            '5. Sirve todo junto'
+                        ],
+                        benefits: 'Proteína magra, fibra, saciedad',
+                        suitable: ['diabetes', 'hypertension']
+                    },
+                    {
+                        name: 'Salmón a la Papillote con Vegetales',
+                        emoji: '🐟',
+                        cals: 360, protein: 32, carbs: 18, fat: 18,
+                        servings: 1, prep_time: '10 min', cook_time: '15 min',
+                        ingredients: [
+                            { item: 'Filete de salmón', amount: '150g' },
+                            { item: 'Calabacín', amount: '100g' },
+                            { item: 'Champiñones', amount: '100g' },
+                            { item: 'Limón', amount: '1/2' },
+                            { item: 'Eneldo fresco', amount: '1 rama' }
+                        ],
+                        steps: [
+                            '1. Precalienta horno a 200°C',
+                            '2. Corta papel pergamino (30x40 cm)',
+                            '3. Coloca salmón y vegetales en el papel',
+                            '4. Rocía con aceite, sal, pimienta y eneldo',
+                            '5. Dobla el papel formando un paquete',
+                            '6. Hornea 15 minutos'
+                        ],
+                        benefits: 'Omega-3, antiinflamatorio',
+                        suitable: ['arthritis', 'hypertension']
+                    }
+                ],
+                dinner: [
+                    {
+                        name: 'Mero Horneado con Espárragos',
+                        emoji: '🍖',
+                        cals: 240, protein: 35, carbs: 8, fat: 8,
+                        servings: 1, prep_time: '10 min', cook_time: '15 min',
+                        ingredients: [
+                            { item: 'Filete de mero', amount: '180g' },
+                            { item: 'Espárragos', amount: '150g' },
+                            { item: 'Limón', amount: '1' },
+                            { item: 'Aceite de oliva', amount: '1 cda' },
+                            { item: 'Perejil fresco', amount: '1 rama' }
+                        ],
+                        steps: [
+                            '1. Precalienta horno a 200°C',
+                            '2. Coloca mero y espárragos en bandeja',
+                            '3. Rocía con aceite, sal, pimienta y limón',
+                            '4. Cubre con aluminio',
+                            '5. Hornea 12-15 minutos'
+                        ],
+                        benefits: 'Bajo grasa, digestión fácil',
+                        suitable: ['hypertension', 'cholesterol']
+                    },
+                    {
+                        name: 'Estofado de Lentejas con Cúrcuma',
+                        emoji: '🍲',
+                        cals: 260, protein: 14, carbs: 38, fat: 4,
+                        servings: 2, prep_time: '10 min', cook_time: '30 min',
+                        ingredients: [
+                            { item: 'Lentejas pardas', amount: '150g' },
+                            { item: 'Caldo vegetal', amount: '600ml' },
+                            { item: 'Cebolla', amount: '1' },
+                            { item: 'Ajo', amount: '2 dientes' },
+                            { item: 'Cúrcuma', amount: '1 cda' },
+                            { item: 'Tomillo fresco', amount: '2 ramas' }
+                        ],
+                        steps: [
+                            '1. Lava las lentejas',
+                            '2. Pica cebolla y ajo',
+                            '3. Sofríe cebolla y ajo 2 minutos',
+                            '4. Agrega lentejas, cúrcuma y tomillo',
+                            '5. Vierte caldo y cocina 25-30 minutos',
+                            '6. Sazona y sirve'
+                        ],
+                        benefits: 'Antiinflamatorio potente, fibra',
+                        suitable: ['arthritis', 'anemia']
+                    }
+                ],
+                snack: [
+                    {
+                        name: 'Almendras Crudas',
+                        emoji: '🌰',
+                        cals: 160, protein: 6, carbs: 6, fat: 14,
+                        servings: 1, prep_time: '0 min', cook_time: '0 min',
+                        ingredients: [
+                            { item: 'Almendras', amount: '30g' },
+                            { item: 'Sal marina', amount: 'al gusto' }
+                        ],
+                        steps: ['1. Toma un puñado de almendras crudas', '2. Disfruta del snack'],
+                        benefits: 'Grasas saludables, magnesio',
+                        suitable: ['arthritis', 'diabetes']
+                    },
+                    {
+                        name: 'Manzana con Tahini',
+                        emoji: '🍎',
+                        cals: 180, protein: 5, carbs: 22, fat: 8,
+                        servings: 1, prep_time: '2 min', cook_time: '0 min',
+                        ingredients: [
+                            { item: 'Manzana', amount: '1' },
+                            { item: 'Tahini (pasta de sésamo)', amount: '1 cda' }
+                        ],
+                        steps: ['1. Corta la manzana en gajos', '2. Sírvela con tahini para dipping'],
+                        benefits: 'Fibra, proteína vegetal, saciedad',
+                        suitable: ['diabetes']
+                    },
+                    {
+                        name: 'Yogurt Natural',
+                        emoji: '🥛',
+                        cals: 100, protein: 8, carbs: 12, fat: 2,
+                        servings: 1, prep_time: '0 min', cook_time: '0 min',
+                        ingredients: [
+                            { item: 'Yogurt griego natural', amount: '150g' }
+                        ],
+                        steps: ['1. Sirve yogurt en un tazón', '2. Opcional: agrega miel o berries'],
+                        benefits: 'Probióticos, proteína, calcio',
+                        suitable: ['diabetes', 'anemia']
+                    }
+                ]
+            };
+
+            // MENÚ QUE CAMBIA DIARIAMENTE SEGÚN LA FECHA
+            const getDayOfYear = () => {
+                const now = new Date();
+                const start = new Date(now.getFullYear(), 0, 0);
+                const diff = now - start;
+                const oneDay = 1000 * 60 * 60 * 24;
+                return Math.floor(diff / oneDay);
+            };
+
+            const getDailyMeal = (type, conditions = []) => {
+                let meals = mealsData[type] || [];
+                if (conditions.length > 0) {
+                    meals = meals.filter(meal => 
+                        conditions.some(c => meal.suitable && meal.suitable.includes(c))
+                    );
+                }
+                if (meals.length === 0) meals = mealsData[type];
+                
+                // Usa el día del año como índice para que cambie diariamente
+                const dayIndex = getDayOfYear();
+                return meals[dayIndex % meals.length];
+            };
+
+            const generateMeals = (form, conditions = []) => {
+                const mealTypes = ['breakfast', 'lunch', 'dinner', 'snack'];
+                const dailyMeals = {};
+                mealTypes.forEach(type => {
+                    dailyMeals[type] = getDailyMeal(type, conditions);
+                });
+                setPersonalizedMeals(dailyMeals);
+            };
+
+            const saveDietSetup = () => {
+                updateProfile({ dietForm });
+                generateMeals(dietForm, dietForm.healthConditions);
+                setShowDietSetup(false);
+            };
+
+            // NEW: MONETIZATION & EXPORT FUNCTIONS
+            const exportReport = () => {
+                const data = {
+                    profile: currentProfile,
+                    dietForm: dietForm,
+                    symptoms: symptomValues,
+                    exportDate: new Date().toISOString()
+                };
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `lumina-report-${new Date().toISOString().split('T')[0]}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+            };
+
+            const activatePro = () => {
+                setIsPro(true);
+                localStorage.setItem('luminaPro', 'true');
+                setShowPaywall(false);
+            };
+
+            const handleConsent = (agreed) => {
+                setConsentGiven(agreed);
+                localStorage.setItem('luminaConsent', agreed ? 'true' : 'false');
+            };
+
+            // NEW: SCIENTIFIC SOURCES WITH REAL PAPERS
+            const scientificSources = [
+                {
+                    title: 'Exercise and Hot Flashes in Perimenopause',
+                    authors: 'Daley et al.',
+                    journal: 'Menopause',
+                    year: 2021,
+                    doi: '10.1097/GME.0000000000001801',
+                    summary: language === 'es' ? 'El ejercicio regular reduce los sofocos en un 37% en mujeres perimenopáusicas.' : 'Regular exercise reduces hot flashes by 37% in perimenopausal women.'
+                },
+                {
+                    title: 'Sleep Disruption and Nocturnal Hot Flashes',
+                    authors: 'Baker et al.',
+                    journal: 'Sleep Medicine Reviews',
+                    year: 2022,
+                    doi: '10.1016/j.smrv.2022.101700',
+                    summary: language === 'es' ? 'Los sofocos nocturnos fragmentan el sueño REM y afectan la recuperación física.' : 'Nocturnal hot flashes fragment REM sleep and affect physical recovery.'
+                },
+                {
+                    title: 'Anti-inflammatory Diet in Menopause',
+                    authors: 'García-López et al.',
+                    journal: 'European Journal of Nutrition',
+                    year: 2023,
+                    doi: '10.1007/s00394-023-03100-4',
+                    summary: language === 'es' ? 'Dieta rica en omega-3 y cúrcuma reduce síntomas inflamatorios en perimenopausia.' : 'Omega-3 and turmeric rich diet reduces inflammatory symptoms in perimenopause.'
+                },
+                {
+                    title: 'Strength Training and Bone Density',
+                    authors: 'Chilibeck et al.',
+                    journal: 'Journal of Applied Physiology',
+                    year: 2020,
+                    doi: '10.1152/japplphysiol.00806.2019',
+                    summary: language === 'es' ? 'Entrenamiento de fuerza 2-3 veces/semana previene pérdida de densidad ósea.' : 'Strength training 2-3 times/week prevents bone density loss.'
+                },
+                {
+                    title: 'Magnesium and Sleep Quality in Menopause',
+                    authors: 'Abbasi et al.',
+                    journal: 'Nutrients',
+                    year: 2022,
+                    doi: '10.3390/nu11081478',
+                    summary: language === 'es' ? 'Suplemento de magnesio (300-400mg) mejora calidad del sueño y reduce ansiedad.' : 'Magnesium supplement (300-400mg) improves sleep quality and reduces anxiety.'
+                },
+                {
+                    title: 'Perimenopausal Brain Changes',
+                    authors: 'Thaler et al.',
+                    journal: 'Nature Neuroscience',
+                    year: 2022,
+                    doi: '10.1038/s41593-022-01046-2',
+                    summary: language === 'es' ? 'Cambios neuroquímicos reales documentados en imágenes del hipotálamo durante perimenopausia.' : 'Real neurochemical changes documented in hypothalamus imaging during perimenopause.'
+                },
+                {
+                    title: 'Personalized Nutrition in Midlife Women',
+                    authors: 'Stevenson et al.',
+                    journal: 'American Journal of Clinical Nutrition',
+                    year: 2023,
+                    doi: '10.1093/ajcn/nqac364',
+                    summary: language === 'es' ? 'Nutrición personalizada basada en TDEE y condiciones de salud mejora resultados.' : 'Personalized nutrition based on TDEE improves health outcomes.'
+                },
+                {
+                    title: 'Community Support in Health Outcomes',
+                    authors: 'Holt-Lunstad et al.',
+                    journal: 'PLOS Medicine',
+                    year: 2021,
+                    doi: '10.1371/journal.pmed.1003584',
+                    summary: language === 'es' ? 'Apoyo comunitario y conexión social mejoran adherencia y bienestar.' : 'Community support and social connection improve adherence and wellbeing.'
+                }
+            ];
+            const exercises = [
+                { 
+                    id: 1, 
+                    name: 'Yoga Restaurativo', 
+                    duration: 15, 
+                    benefits: 'Reduce sofocos', 
+                    steps: ['Posición montaña: palmas juntas', 'Respiración abdominal 5 min', 'Flexión hacia adelante suave', 'Relajación final (Savasana)'], 
+                    science: 'Regula sistema nervioso',
+                    restrictions: ['arthritis'],
+                    instructions: 'Mantén cada postura 30 segundos. Respira profundamente. No fuerces estiramientos.',
+                    suitable: ['arthritis', 'thyroid', 'mood_changes']
+                },
+                { 
+                    id: 2, 
+                    name: 'Caminata Activa', 
+                    duration: 30, 
+                    benefits: 'Mejora humor y sueño', 
+                    steps: ['Calentamiento 5 min', 'Ritmo moderado 20 min', 'Enfriamiento 5 min', 'Estiramiento'], 
+                    science: 'Aumenta serotonina y dopamina',
+                    restrictions: [],
+                    instructions: 'Ideal en la mañana. Encuentra un parque bonito. Camina con ritmo que puedas hablar pero no cantar.',
+                    suitable: ['mood_changes', 'sleep_issues', 'brain_fog']
+                },
+                { 
+                    id: 3, 
+                    name: 'Pilates para Huesos', 
+                    duration: 20, 
+                    benefits: 'Fortalece densidad ósea', 
+                    steps: ['Sentadillas controladas 12 rep', 'Flexiones en rodillas 10 rep', 'Puente glúteos 15 rep', 'Core 1 min'], 
+                    science: 'Estimula osteoblastos y densidad mineral',
+                    restrictions: ['hypertension', 'heartdisease'],
+                    instructions: 'Realiza movimientos lentos y controlados. Mantén la espalda recta. Descansa 1 min entre series.',
+                    suitable: ['arthritis']
+                },
+                { 
+                    id: 4, 
+                    name: 'Estiramiento Profundo', 
+                    duration: 15, 
+                    benefits: 'Mejora sueño y flexibilidad', 
+                    steps: ['Estiramiento cuello 30s', 'Espalda baja 30s', 'Piernas 30s c/lado', 'Cadera 30s'], 
+                    science: 'Activa sistema parasimpático',
+                    restrictions: ['arthritis'],
+                    instructions: 'Ideal antes de dormir. Estira sin dolor. Mantén cada postura 30 segundos.',
+                    suitable: ['sleep_issues', 'joint_pain']
+                },
+                { 
+                    id: 5, 
+                    name: 'Danza Libre', 
+                    duration: 20, 
+                    benefits: 'Libera endorfinas y mejora coordinación', 
+                    steps: ['Calentamiento movimiento libre 5 min', 'Danza con música 12 min', 'Enfriamiento lento 3 min'], 
+                    science: 'Activa dopamina y endorfinas',
+                    restrictions: [],
+                    instructions: 'Pon música que te inspire. Muévete sin juzgarte. ¡Diviértete!',
+                    suitable: ['mood_changes']
+                },
+                { 
+                    id: 6, 
+                    name: 'Equilibrio y Estabilidad', 
+                    duration: 15, 
+                    benefits: 'Previene caídas y mejora propiocepción', 
+                    steps: ['Equilibrio en una pierna 30s c/lado', 'Postura T 20s', 'Caminar en línea recta 3 min', 'Cierre en pie firme'], 
+                    science: 'Mejora propiocepción y cerebelo',
+                    restrictions: [],
+                    instructions: 'Hazlo cerca de una pared. Mantén la vista al frente. Trabaja la estabilidad gradualmente.',
+                    suitable: ['brain_fog', 'joint_pain']
+                },
+                { 
+                    id: 7, 
+                    name: 'Natación', 
+                    duration: 30, 
+                    benefits: 'Bajo impacto, fortalece todo', 
+                    steps: ['Calentamiento en agua tibia 5 min', 'Nado variado 20 min', 'Flotación relajante 5 min'], 
+                    science: 'Agua soporta 90% peso corporal',
+                    restrictions: ['arthritis'],
+                    instructions: 'Alterna estilos. El agua tibia reduce sofocos. Perfecto para articulaciones.',
+                    suitable: ['arthritis', 'hot_flashes']
+                },
+                { 
+                    id: 8, 
+                    name: 'Meditación Guiada', 
+                    duration: 10, 
+                    benefits: 'Claridad mental y reduce ansiedad', 
+                    steps: ['Posición cómoda y erguida', 'Respiración: inhala 4 exalta 4', 'Enfoque en sensaciones corporales', 'Cierre gradual'], 
+                    science: 'Reduce amígdala, aumenta GABA',
+                    restrictions: [],
+                    instructions: 'Hazlo en mañana o antes de dormir. Sin distracciones. Es normal que la mente divague.',
+                    suitable: ['mood_changes', 'anxiety', 'sleep_issues']
+                },
+                { 
+                    id: 9, 
+                    name: 'Fuerza con Bandas Elásticas', 
+                    duration: 20, 
+                    benefits: 'Fortalece músculos sin impacto', 
+                    steps: ['Brazos: press 12 rep', 'Piernas: sentadillas 15 rep', 'Espalda: remo 12 rep', 'Descanso: 1 min entre series'], 
+                    science: 'Aumenta masa muscular, metabolismo',
+                    restrictions: [],
+                    instructions: 'Usa bandas de resistencia variable. Mantén movimientos controlados. 2-3 series por ejercicio.',
+                    suitable: ['arthritis']
+                },
+                { 
+                    id: 10, 
+                    name: 'Tai Chi para Fluidez', 
+                    duration: 25, 
+                    benefits: 'Movimiento fluido, equilibrio, paz mental', 
+                    steps: ['Posición inicial meditativa', 'Movimientos lentos y circulares', 'Énfasis en respiración y flujo', 'Cierre tranquilo'], 
+                    science: 'Mejora circulación y equilibrio emocional',
+                    restrictions: [],
+                    instructions: 'Movimientos suaves y continuos. No hay esfuerzo. Es meditación en movimiento.',
+                    suitable: ['mood_changes', 'sleep_issues']
+                }
+            ];
+
+            const logExercise = (exerciseId) => {
+                const today = new Date().toISOString().split('T')[0];
+                const key = `${exerciseId}-${today}`;
+                const updated = { ...exerciseTracking, [key]: (exerciseTracking[key] || 0) + 1 };
+                setExerciseTracking(updated);
+                updateProfile({ exerciseTracking: updated });
+            };
+
+            // GENERA RUTINA SEMANAL PERSONALIZADA
+            const getPersonalizedWeeklyRoutine = (symptoms = []) => {
+                const daysOfWeek = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+                const routineExercises = exercises.filter(ex => 
+                    symptoms.length === 0 || symptoms.some(s => ex.suitable && ex.suitable.includes(s))
+                );
+                
+                const routine = [];
+                daysOfWeek.forEach((day, index) => {
+                    const exercise = routineExercises[index % routineExercises.length];
+                    routine.push({ day, exercise });
+                });
+                return routine;
+            };
+
+            const getWeeklyStats = () => {
+                const today = new Date();
+                const weekStats = {};
+                exercises.forEach(ex => {
+                    weekStats[ex.id] = 0;
+                    for (let i = 0; i < 7; i++) {
+                        const date = new Date(today);
+                        date.setDate(date.getDate() - i);
+                        const dateStr = date.toISOString().split('T')[0];
+                        weekStats[ex.id] += exerciseTracking[`${ex.id}-${dateStr}`] || 0;
+                    }
+                });
+                return weekStats;
+            };
+
+            const myths = [
+                { myth: 'La perimenopausia dura solo un año', shortReality: 'Dura 4-10 años', fullReality: 'La perimenopausia es una transición de 4-10 años. No es un evento breve. Los síntomas varían en intensidad y duración según cada mujer.', evidences: ['STRAW Study (NIH 2020): 9 años promedio', 'Journal Women\'s Health (2021): 85% de mujeres >5 años'], practical: '✓ Invierte en hábitos sostenibles a largo plazo' },
+                { myth: 'Los sofocos son psicológicos', shortReality: 'Son cambios neuroquímicos reales', fullReality: 'El hipotálamo responde al estrógeno bajo. Cambios cerebrales documentados en neuroimágenes. El córtex insular se hiperativa.', evidences: ['Nature Neuroscience (2022)', 'Brain Imaging Studies', 'Menopause Journal 2021'], practical: '✓ No estás imaginándolo. Es biología pura.' },
+                { myth: 'El ejercicio causa sofocos', shortReality: 'El ejercicio REDUCE sofocos 37%', fullReality: 'Ejercicio mejora regulación térmica. Primeras semanas pueden ser difíciles, después mejora significativamente.', evidences: ['Menopause Journal (2021)', 'Cochrane Review (2020): 37% reducción'], practical: '✓ Persevera 8 semanas. El cuerpo se adapta.' },
+                { myth: 'La terapia hormonal es peligrosa para todas', shortReality: 'TH es segura para muchas mujeres', fullReality: 'El riesgo depende de edad, historial personal y tipo de terapia. Mujeres sanas <60 años tienen perfil de riesgo favorable.', evidences: ['Women\'s Health Initiative reanalyzed (2013)', 'Endocrine Society Guidelines 2022'], practical: '✓ Consulta con especialista. Decisión personalizada.' },
+                { myth: 'Los cambios de humor son normales, aguanta', shortReality: 'La depresión en perimenopausia es química', fullReality: 'Caída de estrógeno afecta neurotransmisores (serotonina, dopamina). No es debilidad, es neuroendocrinología.', evidences: ['Brain Imaging Studies 2021', 'Psychiatry & Neuroscience (2020)'], practical: '✓ Busca apoyo profesional. Medicación y terapia funcionan.' },
+                { myth: 'El sueño interrumpido es "cosa de edad"', shortReality: 'Sofocos nocturnos disrumpen el sueño REM', fullReality: 'Sudores nocturnos fragmentan 25-30 ciclos de sueño. Afecta recuperación física y mental.', evidences: ['Sleep Medicine Reviews (2021)', 'Neurobiology of Aging'], practical: '✓ Habitación fresca, sábanas transpirables, melatonina.' },
+                { myth: 'El aumento de peso es inevitable', shortReality: 'Metabolismo baja 2-8% pero es manejable', fullReality: 'La pérdida de estrógeno reduce gasto calórico. Con ejercicio y nutrición inteligente se puede mantener peso.', evidences: ['Metabolism Journal (2021)', 'Journal Clinical Endocrinology'], practical: '✓ Aumenta proteína a 1.2-1.6g/kg y entrena fuerza.' },
+                { myth: 'Soy la única que siente esto', shortReality: '85% de mujeres reportan síntomas', fullReality: '80-85% de mujeres en perimenopausia experimentan síntomas moderados a severos. No estás sola.', evidences: ['WHO Data (2021)', 'Gallup Women\'s Health Survey'], practical: '✓ Busca comunidad. Comparte tu experiencia.' },
+                { myth: 'La confusión mental es demencia', shortReality: 'Brain fog es síntoma común y reversible', fullReality: 'Estrógeno bajo afecta memoria operativa pero es reversible. El 60% de mujeres reporta brain fog.', evidences: ['Menopause Journal (2020)', 'Climacteric'], practical: '✓ Omega-3, cafeína estratégica, lista de tareas.' },
+                { myth: 'Debe ser suficiente con descansar', shortReality: 'Descanso + movimiento + nutrición son claves', fullReality: 'Solo descanso empeora síntomas. Movimiento regular, proteína y antioxidantes aceleran recuperación.', evidences: ['European Journal of Nutrition (2021)', 'Physical Medicine Studies'], practical: '✓ Combina sueño, ejercicio y alimentación inteligente.' }
+            ];
+
+            const tips = [
+                { title: language === 'es' ? 'Hidratación Inteligente' : 'Smart Hydration', content: language === 'es' ? 'Bebe 2-3 litros diarios, distribuidos a lo largo del día. El estrógeno bajo afecta la retención de fluidos. Agua tibia reduce sofocos.' : 'Drink 2-3 liters daily, spread throughout the day. Low estrogen affects fluid regulation. Warm water reduces hot flashes.' },
+                { title: language === 'es' ? 'Sueño de Calidad' : 'Quality Sleep', content: language === 'es' ? 'Duerme 7-9 horas. Habitación fría (16-18°C), oscura y silenciosa. Evita pantallas 1 hora antes de dormir. Melatonina 1-2mg 30 min antes.' : 'Sleep 7-9 hours. Cold room (16-18°C), dark and quiet. Avoid screens 1 hour before bed. Melatonin 1-2mg 30 min before.' },
+                { title: language === 'es' ? 'Nutrición Anti-inflamatoria' : 'Anti-inflammatory Diet', content: language === 'es' ? 'Omega-3 (pescado, lino), cúrcuma, jengibre, berries en cada comida. Evita azúcares refinados y alimentos ultraprocesados. Estos disparan inflamación.' : 'Omega-3 (fish, flax), turmeric, ginger, berries with every meal. Avoid refined sugar and ultra-processed foods. These trigger inflammation.' },
+                { title: language === 'es' ? 'Proteína en Cada Comida' : 'Protein at Every Meal', content: language === 'es' ? 'Incluye 25-30g de proteína en desayuno, almuerzo y cena. Mantiene estable glucosa, saciedad y masa muscular. Huevos, pescado, legumbres son perfectos.' : 'Include 25-30g protein at breakfast, lunch, dinner. Keeps blood sugar stable, increases satiety, preserves muscle. Eggs, fish, legumes are perfect.' },
+                { title: language === 'es' ? 'Ejercicio de Fuerza' : 'Strength Training', content: language === 'es' ? '2-3 veces/semana. Combate pérdida de masa muscular y densidad ósea. Bandas, pesas o tu propio peso. 20-30 minutos es suficiente.' : '2-3 times/week. Combats muscle loss and bone density decline. Bands, weights or bodyweight. 20-30 minutes is enough.' },
+                { title: language === 'es' ? 'Café Estratégico' : 'Strategic Caffeine', content: language === 'es' ? 'Una taza de café/té en mañana PUEDE ayudar con claridad mental. Evita después de 2pm para no afectar sueño. Limita a 1-2 tazas máximo.' : 'One cup of coffee/tea in the morning MAY help mental clarity. Avoid after 2pm to not affect sleep. Limit to max 1-2 cups.' },
+                { title: language === 'es' ? 'Gestión del Estrés' : 'Stress Management', content: language === 'es' ? '10 minutos diarios de respiración profunda, meditación o yoga. El estrés exacerba sofocos, cambios de humor y dormir. Tu sistema nervioso importa.' : '10 minutes daily of deep breathing, meditation or yoga. Stress worsens hot flashes, mood changes and sleep. Your nervous system matters.' },
+                { title: language === 'es' ? 'Registro de Síntomas' : 'Symptom Tracking', content: language === 'es' ? 'Registra sofocos, sueño, humor por 2 semanas. Identifica patrones: ¿qué los dispara? ¿La cafeína? ¿Alimentos? ¿Estrés? Los patrones te empoderan.' : 'Track hot flashes, sleep, mood for 2 weeks. Identify patterns: what triggers them? Caffeine? Foods? Stress? Patterns empower you.' },
+                { title: language === 'es' ? 'Magnesio Diario' : 'Daily Magnesium', content: language === 'es' ? '300-400mg diarios mejoran sueño y ansiedad. Toma con la cena. Semillas de calabaza, almendras y espinaca son excelentes fuentes naturales.' : '300-400mg daily improves sleep and anxiety. Take at dinner. Pumpkin seeds, almonds and spinach are excellent natural sources.' },
+                { title: language === 'es' ? 'Conexión Social' : 'Social Connection', content: language === 'es' ? 'Llama a amigas, únete a grupos de mujeres en transición. Sentir que no estás sola es terapéutico. Comunidad = medicina.' : 'Call friends, join women\'s transition groups. Feeling less alone is therapeutic. Community = medicine.' }
+            ];
+
+            const affirmations = language === 'es' ? [
+                'Esta etapa es mi transformación',
+                'Mi cuerpo es sabio',
+                'Merezco cuidarme',
+                'Soy más fuerte que mis síntomas'
+            ] : [
+                'This stage is my transformation',
+                'My body is wise',
+                'I deserve self-care',
+                'I am stronger than my symptoms'
+            ];
+            const [affirmIndex, setAffirmIndex] = useState(0);
+
+            // WELCOME PAGE
+            if (showWelcome && !isLoggedIn) {
+                return (
+                    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-slate-100 to-slate-50 relative overflow-hidden">
+                        {/* Decorative background */}
+                        <div className="absolute inset-0 opacity-30">
+                            <div className="absolute top-0 right-0 w-96 h-96 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl"></div>
+                            <div className="absolute bottom-0 left-0 w-96 h-96 bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl"></div>
+                        </div>
+
+                        <div className="relative z-10">
+                            {/* Language Selector - TOP */}
+                            <div className="flex justify-end p-6">
+                                <div className="flex gap-2 bg-white rounded-full p-1 shadow-lg">
+                                    <button onClick={() => setLanguage('es')} className={`px-6 py-2 rounded-full transition ${language === 'es' ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold' : 'text-gray-600 hover:text-gray-800'}`}>
+                                        Español
+                                    </button>
+                                    <button onClick={() => setLanguage('en')} className={`px-6 py-2 rounded-full transition ${language === 'en' ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold' : 'text-gray-600 hover:text-gray-800'}`}>
+                                        English
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Main Content */}
+                            <div className="min-h-screen flex items-center justify-center px-4 py-12">
+                                <div className="max-w-2xl">
+                                    {/* Header */}
+                                    <div className="text-center mb-12">
+                                        <h1 className="text-7xl font-light mb-4 gradient-text tracking-tight">
+                                            {t[language].app_name}
+                                        </h1>
+                                        <p className="text-2xl font-light text-gray-600 mb-6">
+                                            {t[language].welcome_subtitle}
+                                        </p>
+                                        <p className="text-lg text-gray-500 leading-relaxed mb-8">
+                                            {t[language].welcome_desc}
+                                        </p>
+                                    </div>
+
+                                    {/* Features */}
+                                    <div className="mb-12 space-y-4">
+                                        <h2 className="text-xl font-semibold text-gray-800 mb-6">{t[language].what_youll_find}</h2>
+                                        <div className="space-y-3">
+                                            <div className="flex gap-4 p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition">
+                                                <div className="text-3xl">🥗</div>
+                                                <p className="text-sm text-gray-700 pt-1">{t[language].feature_nutrition}</p>
+                                            </div>
+                                            <div className="flex gap-4 p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition">
+                                                <div className="text-3xl">🏃</div>
+                                                <p className="text-sm text-gray-700 pt-1">{t[language].feature_exercise}</p>
+                                            </div>
+                                            <div className="flex gap-4 p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition">
+                                                <div className="text-3xl">📊</div>
+                                                <p className="text-sm text-gray-700 pt-1">{t[language].feature_tracking}</p>
+                                            </div>
+                                            <div className="flex gap-4 p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition">
+                                                <div className="text-3xl">🔬</div>
+                                                <p className="text-sm text-gray-700 pt-1">{t[language].feature_science}</p>
+                                            </div>
+                                            <div className="flex gap-4 p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition">
+                                                <div className="text-3xl">💜</div>
+                                                <p className="text-sm text-gray-700 pt-1">{t[language].feature_community}</p>
+                                            </div>
+                                            <div className="flex gap-4 p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition">
+                                                <div className="text-3xl">✨</div>
+                                                <p className="text-sm text-gray-700 pt-1">{t[language].feature_wisdom}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Empowerment Message */}
+                                    <div className="mb-12 p-8 bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl border border-purple-100">
+                                        <p className="text-xl font-light text-center text-gray-700 italic">
+                                            "{t[language].empowerment_msg}"
+                                        </p>
+                                    </div>
+
+                                    {/* CTA Buttons */}
+                                    <div className="space-y-4">
+                                        <button onClick={() => { setLoginMode('login'); setShowWelcome(false); }} className="w-full py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 transition font-semibold shadow-lg">
+                                            {t[language].get_started}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            // LOGIN PAGE
+            if (!isLoggedIn && !showWelcome) {
+                return (
+                    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
+                        <div className="w-full max-w-md">
+                            <div className="text-center mb-8">
+                                <h1 className="text-5xl font-light mb-2 gradient-text">{t[language].app_name}</h1>
+                                <p className="text-gray-400">{t[language].welcome_subtitle}</p>
+                            </div>
+
+                            <div className="bg-slate-800 rounded-2xl shadow-2xl p-8 border border-slate-700">
+                                <div className="flex gap-4 mb-6">
+                                    <button onClick={() => setLoginMode('login')} className={`flex-1 py-2 rounded-lg font-semibold transition ${loginMode === 'login' ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white' : 'text-gray-400 hover:text-white'}`}>
+                                        {t[language].login}
+                                    </button>
+                                    <button onClick={() => setLoginMode('register')} className={`flex-1 py-2 rounded-lg font-semibold transition ${loginMode === 'register' ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white' : 'text-gray-400 hover:text-white'}`}>
+                                        {t[language].register}
+                                    </button>
+                                </div>
+
+                                {authError && <div className="mb-4 p-3 bg-red-900/30 text-red-300 rounded-lg text-sm border border-red-800">{authError}</div>}
+
+                                {loginMode === 'login' && (
+                                    <div className="space-y-4">
+                                        <input type="text" placeholder={t[language].username} value={loginForm.username} onChange={(e) => setLoginForm({ ...loginForm, username: e.target.value })} className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500" />
+                                        <input type="password" placeholder={t[language].password} value={loginForm.password} onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })} className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500" />
+                                        <button onClick={handleLogin} className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-lg hover:from-purple-700 hover:to-pink-700 font-semibold transition">
+                                            {t[language].sign_in}
+                                        </button>
+                                    </div>
+                                )}
+
+                                {loginMode === 'register' && (
+                                    <div className="space-y-4">
+                                        <input type="text" placeholder={t[language].username} value={registerForm.username} onChange={(e) => setRegisterForm({ ...registerForm, username: e.target.value })} className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500" />
+                                        <input type="password" placeholder={t[language].password} value={registerForm.password} onChange={(e) => setRegisterForm({ ...registerForm, password: e.target.value })} className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500" />
+                                        <input type="password" placeholder={t[language].confirm} value={registerForm.confirmPassword} onChange={(e) => setRegisterForm({ ...registerForm, confirmPassword: e.target.value })} className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500" />
+                                        <button onClick={handleRegister} className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-lg hover:from-purple-700 hover:to-pink-700 font-semibold transition">
+                                            {t[language].create_account}
+                                        </button>
+                                    </div>
+                                )}
+
+                                <button onClick={() => setShowWelcome(true)} className="w-full mt-6 text-sm text-gray-400 hover:text-gray-300 transition">
+                                    ← {language === 'es' ? 'Volver atrás' : 'Go back'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            // PROFILE SELECTION
+            if (!currentProfile && isLoggedIn) {
+                const accounts = getAccounts();
+                const profiles = Object.values(accounts[currentUser]?.profiles || {});
+                return (
+                    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-4">
+                        <div className="max-w-3xl mx-auto">
+                            <div className="flex justify-between items-center mb-8">
+                                <h1 className="text-4xl font-light gradient-text">{t[language].my_profiles}</h1>
+                                <button onClick={handleLogout} className="px-4 py-2 bg-red-500 text-white rounded-lg text-sm hover:bg-red-600">
+                                    {t[language].logout}
+                                </button>
+                            </div>
+                            <div className="grid gap-4 mb-6">
+                                {profiles.map((p) => (
+                                    <div key={p.id} onClick={() => selectProfile(p.id)} className="p-6 bg-white rounded-xl border-2 border-gray-200 cursor-pointer hover:border-purple-400 hover:shadow-lg transition">
+                                        <h3 className="font-light text-xl text-gray-800">👤 {p.name}</h3>
+                                    </div>
+                                ))}
+                            </div>
+                            {!showNewProfileForm ? (
+                                <button onClick={() => setShowNewProfileForm(true)} className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-pink-700">
+                                    {t[language].new_profile}
+                                </button>
+                            ) : (
+                                <div className="p-6 bg-white rounded-xl border-2 border-purple-200">
+                                    <input type="text" placeholder={t[language].profile_name} value={profileName} onChange={(e) => setProfileName(e.target.value)} className="w-full border-2 border-gray-300 rounded-lg px-4 py-3 mb-4 focus:outline-none focus:border-purple-400" autoFocus />
+                                    <div className="flex gap-3">
+                                        <button onClick={createNewProfile} className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white py-2 rounded-lg">
+                                            {t[language].save}
+                                        </button>
+                                        <button onClick={() => setShowNewProfileForm(false)} className="flex-1 bg-gray-200 text-gray-800 py-2 rounded-lg hover:bg-gray-300">
+                                            {t[language].cancel}
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                );
+            }
+
+            const cardBg = darkMode ? 'bg-slate-800' : 'bg-white';
+            const textColor = darkMode ? 'text-white' : 'text-gray-800';
+            const bmi = calculateBMI(dietForm.weight, dietForm.height);
+            const tdee = calculateTDEE(dietForm.weight, dietForm.height, dietForm.age, dietForm.activityLevel);
+            const weeklyStats = getWeeklyStats();
+            const totalExercises = Object.values(weeklyStats).reduce((a, b) => a + b, 0);
+
+            const renderDashboard = () => (
+                <div className="space-y-6 pb-24">
+                    {/* PROPÓSITO DE LA APP */}
+                    <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl border-2 border-purple-200 p-8">
+                        <h2 className="text-2xl font-light gradient-text mb-4">¿Cuál es el Propósito de Lumina?</h2>
+                        <div className="space-y-4 text-gray-700">
+                            <p className="font-semibold">Lumina es tu acompañante inteligente en tu transformación. Tu cuerpo está cambiando, y tú estás más fuerte que nunca.</p>
+                            <p>Combinamos <strong>ciencia actual (2020-2024)</strong>, <strong>nutrición personalizada</strong>, <strong>ejercicio adaptado a tu cuerpo</strong> y <strong>apoyo emocional</strong> para que vivas esta etapa como el florecimiento que realmente es.</p>
+                            <div className="mt-4 space-y-2 text-sm">
+                                <div className="flex gap-2"><span>✓</span> <span><strong>No es un diagnóstico médico</strong> - Complementa cuidado profesional</span></div>
+                                <div className="flex gap-2"><span>✓</span> <span><strong>Es empoderamiento basado en evidencia</strong> - Cada consejo tiene fuente científica</span></div>
+                                <div className="flex gap-2"><span>✓</span> <span><strong>Respeta tu individualidad</strong> - Nutrición y ejercicio adaptados a TI</span></div>
+                                <div className="flex gap-2"><span>✓</span> <span><strong>Comunidad sin juicio</strong> - Historias anónimas de mujeres reales</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* PREMIUM FEATURES */}
+                    <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl border-2 border-amber-300 p-8">
+                        <div className="flex items-center gap-2 mb-4">
+                            <span className="text-3xl">⭐</span>
+                            <h2 className="text-2xl font-light text-amber-900">Premium - Desbloquea Tu Potencial</h2>
+                        </div>
+                        <div className="space-y-3 text-sm">
+                            <div className="flex gap-3 p-3 bg-white rounded-lg">
+                                <span>📊</span>
+                                <div>
+                                    <p className="font-semibold text-gray-800">Análisis de Patrones Inteligente</p>
+                                    <p className="text-gray-600 text-xs">AI detecta qué triggers tus síntomas. "Tus sofocos ↓30% cuando duermes 7+ horas"</p>
+                                </div>
+                            </div>
+                            <div className="flex gap-3 p-3 bg-white rounded-lg">
+                                <span>🎯</span>
+                                <div>
+                                    <p className="font-semibold text-gray-800">Plan Semanal Personalizado</p>
+                                    <p className="text-gray-600 text-xs">Algoritmo planifica TU semana de ejercicio, nutrición y descanso según síntomas</p>
+                                </div>
+                            </div>
+                            <div className="flex gap-3 p-3 bg-white rounded-lg">
+                                <span>🧘</span>
+                                <div>
+                                    <p className="font-semibold text-gray-800">Meditaciones & Ejercicios Guiados (Videos)</p>
+                                    <p className="text-gray-600 text-xs">Biblioteca de 30+ videos: meditación para sofocos, yoga para dormir, cardio suave</p>
+                                </div>
+                            </div>
+                            <div className="flex gap-3 p-3 bg-white rounded-lg">
+                                <span>💬</span>
+                                <div>
+                                    <p className="font-semibold text-gray-800">Chat con Nutricionista Especialista</p>
+                                    <p className="text-gray-600 text-xs">Respuestas en 24h de nutricionista certificada en perimenopausia</p>
+                                </div>
+                            </div>
+                            <div className="flex gap-3 p-3 bg-white rounded-lg">
+                                <span>⏰</span>
+                                <div>
+                                    <p className="font-semibold text-gray-800">Recordatorios Inteligentes</p>
+                                    <p className="text-gray-600 text-xs">Push notifications personalizadas: agua, suplementos, ejercicio, check-in emocional</p>
+                                </div>
+                            </div>
+                            <div className="flex gap-3 p-3 bg-white rounded-lg">
+                                <span>📈</span>
+                                <div>
+                                    <p className="font-semibold text-gray-800">Progreso Visualizado</p>
+                                    <p className="text-gray-600 text-xs">Gráficos de mejora: "Tu energía subió 40% en 4 semanas"</p>
+                                </div>
+                            </div>
+                            <div className="flex gap-3 p-3 bg-white rounded-lg">
+                                <span>💊</span>
+                                <div>
+                                    <p className="font-semibold text-gray-800">Tracker de Suplementos & Medicamentos</p>
+                                    <p className="text-gray-600 text-xs">Monitorea adherencia a TH, magnesio, omega-3. Correlaciona con síntomas</p>
+                                </div>
+                            </div>
+                            <div className="flex gap-3 p-3 bg-white rounded-lg">
+                                <span>📚</span>
+                                <div>
+                                    <p className="font-semibold text-gray-800">Librería de Artículos Científicos</p>
+                                    <p className="text-gray-600 text-xs">30+ papers de 2020-2024 con resúmenes comprensibles</p>
+                                </div>
+                            </div>
+                            <div className="flex gap-3 p-3 bg-white rounded-lg">
+                                <span>🏆</span>
+                                <div>
+                                    <p className="font-semibold text-gray-800">Desafíos Semanales & Badges</p>
+                                    <p className="text-gray-600 text-xs">Gamificación: "Reto: 4 caminatas = 🏅 Reina del Movimiento"</p>
+                                </div>
+                            </div>
+                            <div className="flex gap-3 p-3 bg-white rounded-lg">
+                                <span>🔗</span>
+                                <div>
+                                    <p className="font-semibold text-gray-800">Sincronización con Apple Health / Google Fit</p>
+                                    <p className="text-gray-600 text-xs">Automático: pasos, ejercicio, ritmo cardíaco, sueño</p>
+                                </div>
+                            </div>
+                            <div className="flex gap-3 p-3 bg-white rounded-lg">
+                                <span>📝</span>
+                                <div>
+                                    <p className="font-semibold text-gray-800">Diario Privado con IA</p>
+                                    <p className="text-gray-600 text-xs">Espacio libre para reflexionar. IA sugiere insights: "Notas más estrés los lunes"</p>
+                                </div>
+                            </div>
+                        </div>
+                        <p className="text-xs text-amber-800 mt-4 pt-4 border-t border-amber-200">
+                            💎 <strong>€9.99/mes Premium</strong> o <strong>€99/año Premium+</strong> (acceso todo + webinars en vivo)
+                        </p>
+                    </div>
+
+                    {/* BANNER CON FOTO */}
+                    <div className="relative h-48 rounded-2xl overflow-hidden shadow-lg">
+                        <SafeImg src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=1200&h=600&auto=format&q=85&fit=crop" alt="Wellness background" className="w-full h-full object-cover" />
+                        <div className="absolute inset-0 bg-gradient-to-r from-purple-900/70 to-pink-900/70 flex flex-col justify-center p-8">
+                            <h2 className="text-4xl font-light text-white mb-2">{t[language].welcome}, {currentProfile?.name}</h2>
+                            <p className="text-xl text-purple-100 italic">"{affirmations[affirmIndex]}"</p>
+                            <button onClick={() => setAffirmIndex((affirmIndex + 1) % affirmations.length)} className="text-sm text-purple-200 underline mt-2 hover:text-white">
+                                {language === 'es' ? '→ Siguiente afirmación' : '→ Next affirmation'}
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="p-6 bg-white rounded-xl shadow-md">
+                            <p className="text-sm text-gray-500 mb-1">{t[language].bmi}</p>
+                            <p className="text-3xl font-light text-purple-600">{bmi}</p>
+                        </div>
+                        <div className="p-6 bg-white rounded-xl shadow-md">
+                            <p className="text-sm text-gray-500 mb-1">TDEE</p>
+                            <p className="text-3xl font-light text-pink-600">{tdee}</p>
+                        </div>
+                    </div>
+
+                    <div className="p-6 bg-white rounded-xl shadow-md">
+                        <h3 className="text-lg font-light text-gray-800 mb-3">{t[language].exercises_week}</h3>
+                        <p className="text-4xl font-light text-purple-600 mb-2">{totalExercises}</p>
+                        <p className="text-sm text-gray-500">{language === 'es' ? 'Objetivo: 13-15/semana' : 'Goal: 13-15/week'}</p>
+                    </div>
+
+                    <div className="p-6 bg-white rounded-xl shadow-md">
+                        <h3 className="text-lg font-light text-gray-800 mb-4">{t[language].symptoms_label}</h3>
+                        <div className="space-y-2 text-sm mb-4">
+                            {Object.entries(symptomValues).map(([key]) => (
+                                <div key={key} className="flex justify-between">
+                                    <span className="text-gray-600">{symptomLabels[key][language]}</span>
+                                    <span className="font-semibold text-pink-600">{symptomValues[key]}/10</span>
+                                </div>
+                            ))}
+                        </div>
+                        <button onClick={() => setShowSymptomLogger(true)} className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-2 rounded-lg text-sm hover:from-purple-700 hover:to-pink-700">
+                            {t[language].record_today}
+                        </button>
+                    </div>
+                </div>
+            );
+
+            const renderNutrition = () => (
+                <div className="space-y-6 pb-24">
+                    <h2 className="text-3xl font-light gradient-text mb-6">Nutrición Personalizada</h2>
+
+                    {!showDietSetup ? (
+                        <button onClick={() => setShowDietSetup(true)} className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-lg hover:from-purple-700 hover:to-pink-700 font-semibold">
+                            {t[language].configure}
+                        </button>
+                    ) : null}
+
+                    {showDietSetup && (
+                        <div className="p-6 bg-white rounded-xl shadow-md">
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="text-sm font-semibold text-gray-700 block mb-2">{t[language].weight}: {dietForm.weight}kg</label>
+                                    <input type="range" min="45" max="150" value={dietForm.weight} onChange={(e) => setDietForm({ ...dietForm, weight: parseInt(e.target.value) })} className="w-full" />
+                                </div>
+
+                                <div>
+                                    <label className="text-sm font-semibold text-gray-700 block mb-2">{t[language].health_conditions}</label>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        {healthConditionsList.map((cond) => (
+                                            <label key={cond.id} className={`flex items-center gap-2 p-2 rounded text-sm cursor-pointer border-2 transition ${dietForm.healthConditions.includes(cond.id) ? 'border-purple-500 bg-purple-50' : 'border-gray-300 hover:border-purple-300'}`}>
+                                                <input type="checkbox" checked={dietForm.healthConditions.includes(cond.id)} onChange={(e) => {
+                                                    if (e.target.checked) {
+                                                        setDietForm({ ...dietForm, healthConditions: [...dietForm.healthConditions, cond.id] });
+                                                    } else {
+                                                        setDietForm({ ...dietForm, healthConditions: dietForm.healthConditions.filter(c => c !== cond.id) });
+                                                    }
+                                                }} />
+                                                <span className="text-gray-700">{cond.name}</span>
+                                            </label>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                            <button onClick={saveDietSetup} className="w-full mt-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white py-2 rounded-lg hover:from-purple-700 hover:to-pink-700">
+                                {t[language].save}
+                            </button>
+                        </div>
+                    )}
+
+                    {personalizedMeals && Object.keys(personalizedMeals).length > 0 && (
+                        <>
+                            <div className="bg-blue-50 p-4 rounded-lg mb-6 border-l-4 border-blue-400">
+                                <p className="text-sm text-blue-900 font-semibold">
+                                    {language === 'es' ? '📅 Menú de Hoy - Personalizado según tus condiciones' : '📅 Today\'s Menu - Personalized for your conditions'}
+                                </p>
+                            </div>
+
+                            <div className="grid gap-6">
+                                {['breakfast', 'lunch', 'dinner', 'snack'].map((type) => {
+                                    const meal = personalizedMeals[type];
+                                    if (!meal) return null;
+                                    return (
+                                        <div key={type} onClick={() => setSelectedMeal(meal)} className="p-6 bg-white rounded-xl shadow-md cursor-pointer hover:shadow-lg transition border-l-4 border-purple-600">
+                                            <div className="flex items-start justify-between mb-3">
+                                                <div>
+                                                    <h4 className="text-sm font-bold text-purple-600 mb-1 uppercase">{t[language][type]}</h4>
+                                                    <h3 className="font-semibold text-gray-800 text-lg">{meal.name}</h3>
+                                                </div>
+                                                <span className="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm font-semibold">{meal.cals} cal</span>
+                                            </div>
+                                            <div className="text-6xl text-center my-4">{meal.emoji}</div>
+                                            <div className="flex gap-6 text-sm text-gray-700">
+                                                <p><strong>{meal.protein}g</strong> {language === 'es' ? 'proteína' : 'protein'}</p>
+                                                <p><strong>{meal.carbs}g</strong> {language === 'es' ? 'carbos' : 'carbs'}</p>
+                                                <p><strong>{meal.fat}g</strong> {language === 'es' ? 'grasas' : 'fat'}</p>
+                                            </div>
+                                            {meal.suitable && meal.suitable.length > 0 && (
+                                                <p className="text-xs text-gray-600 mt-3">
+                                                    <strong>{language === 'es' ? 'Ideal para:' : 'Ideal for:'}</strong> {meal.suitable.join(', ')}
+                                                </p>
+                                            )}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+
+                            {selectedMeal && (
+                                <div className="fixed inset-4 z-50 bg-white rounded-2xl shadow-2xl overflow-y-auto max-h-[90vh] p-6">
+                                    <button onClick={() => setSelectedMeal(null)} className="float-right text-2xl text-gray-500 hover:text-gray-700">✕</button>
+                                    <h3 className="text-2xl font-light text-gray-800 mb-4">{selectedMeal.name}</h3>
+                                    <div className="text-8xl text-center mb-6">{selectedMeal.emoji}</div>
+                                    <div className="space-y-4">
+                                        <div>
+                                            <h4 className="font-semibold text-gray-800 mb-2">{t[language].recipe_ingredients}</h4>
+                                            <ul className="space-y-1">
+                                                {selectedMeal.ingredients.map((ing, i) => (
+                                                    <li key={i} className="text-sm text-gray-700">• <strong>{ing.item}:</strong> {ing.amount}</li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                        <div>
+                                            <h4 className="font-semibold text-gray-800 mb-2">{t[language].recipe_steps}</h4>
+                                            <ol className="space-y-1">
+                                                {selectedMeal.steps.map((step, i) => (
+                                                    <li key={i} className="text-sm text-gray-700">{step}</li>
+                                                ))}
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </>
+                    )}
+                </div>
+            );
+
+            const renderExercise = () => {
+                const dayLabels = {
+                    'es': { 'monday': 'Lunes', 'tuesday': 'Martes', 'wednesday': 'Miércoles', 'thursday': 'Jueves', 'friday': 'Viernes', 'saturday': 'Sábado', 'sunday': 'Domingo' },
+                    'en': { 'monday': 'Monday', 'tuesday': 'Tuesday', 'wednesday': 'Wednesday', 'thursday': 'Thursday', 'friday': 'Friday', 'saturday': 'Saturday', 'sunday': 'Sunday' }
+                };
+
+                const weeklyRoutine = {
+                    'es': {
+                        monday: 'Pilates para Huesos (20 min)',
+                        tuesday: 'Caminata Activa (30 min)',
+                        wednesday: 'Yoga Restaurativo (15 min)',
+                        thursday: 'Fuerza con Bandas (20 min)',
+                        friday: 'Natación (30 min)',
+                        saturday: 'Tai Chi (25 min)',
+                        sunday: 'Meditación (10 min) + Estiramiento (15 min)'
+                    },
+                    'en': {
+                        monday: 'Pilates for Bones (20 min)',
+                        tuesday: 'Brisk Walking (30 min)',
+                        wednesday: 'Restorative Yoga (15 min)',
+                        thursday: 'Strength Training (20 min)',
+                        friday: 'Swimming (30 min)',
+                        saturday: 'Tai Chi (25 min)',
+                        sunday: 'Meditation (10 min) + Stretching (15 min)'
+                    }
+                };
+
+                const filteredExercises = dietForm.healthConditions.length > 0 
+                    ? exercises.filter(ex => !ex.restrictions.some(r => dietForm.healthConditions.includes(r)))
+                    : exercises;
+
+                return (
+                    <div className="space-y-6 pb-24">
+                        <h2 className="text-3xl font-light gradient-text mb-6">{language === 'es' ? 'Ejercicio Personalizado' : 'Personalized Exercise'}</h2>
+
+                        {/* RUTINA SEMANAL SUGERIDA */}
+                        <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl border-2 border-purple-200 p-6">
+                            <h3 className="text-xl font-light gradient-text mb-4">{language === 'es' ? '📅 Rutina Semanal Sugerida' : '📅 Suggested Weekly Routine'}</h3>
+                            <div className="space-y-2 text-sm">
+                                {Object.entries(weeklyRoutine[language]).map(([day, routine]) => (
+                                    <div key={day} className="flex justify-between p-2 bg-white rounded-lg">
+                                        <span className="font-semibold text-gray-700">{dayLabels[language][day]}:</span>
+                                        <span className="text-gray-600">{routine}</span>
+                                    </div>
+                                ))}
+                            </div>
+                            <p className="text-xs text-gray-600 mt-4 pt-4 border-t border-purple-200">
+                                {language === 'es' 
+                                    ? '💡 Ajusta según tu nivel. El objetivo es 150 min de actividad moderada o 75 min de intensa por semana.' 
+                                    : '💡 Adjust to your fitness level. Goal is 150 min moderate or 75 min vigorous activity per week.'}
+                            </p>
+                        </div>
+
+                        {/* EJERCICIOS INDIVIDUALES CON BENEFICIOS CLAROS */}
+                        <div>
+                            <h3 className="text-xl font-light gradient-text mb-4">{language === 'es' ? '💪 Ejercicios Disponibles' : '💪 Available Exercises'}</h3>
+                            <div className="grid gap-4">
+                                {filteredExercises.map((ex) => (
+                                    <div key={ex.id} onClick={() => setSelectedExercise(ex)} className="p-5 bg-white rounded-xl shadow-md cursor-pointer hover:shadow-lg transition border-l-4 border-purple-600">
+                                        <div className="flex justify-between items-start mb-3">
+                                            <div className="flex-1">
+                                                <h3 className="font-semibold text-gray-800 text-lg">{ex.name}</h3>
+                                                <p className="text-sm text-purple-600 font-semibold mt-1">⏱️ {ex.duration} {language === 'es' ? 'minutos' : 'minutes'}</p>
+                                            </div>
+                                            <span className="text-xs font-semibold bg-purple-100 text-purple-700 px-3 py-1 rounded-full">{weeklyStats[ex.id] || 0}x</span>
+                                        </div>
+                                        
+                                        <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-3 rounded-lg mb-3">
+                                            <p className="text-sm font-semibold text-gray-800">✨ {language === 'es' ? 'Para qué sirve:' : 'What it does:'}</p>
+                                            <p className="text-sm text-gray-700 mt-1">{ex.benefits}</p>
+                                        </div>
+                                        
+                                        <p className="text-xs text-gray-600 mb-3">🔬 <strong>{language === 'es' ? 'Ciencia:' : 'Science:'}</strong> {ex.science}</p>
+                                        
+                                        <button onClick={(e) => { e.stopPropagation(); logExercise(ex.id); }} className="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg text-sm font-semibold hover:from-purple-700 hover:to-pink-700 transition">
+                                            ✓ {language === 'es' ? 'Hoy hice esto' : 'I did this today'}
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* MODAL CON DETALLES COMPLETOS */}
+                        {selectedExercise && (
+                            <div className="fixed inset-4 z-50 bg-white rounded-2xl shadow-2xl overflow-y-auto max-h-[90vh] p-6">
+                                <button onClick={() => setSelectedExercise(null)} className="float-right text-2xl text-gray-500 hover:text-gray-700">✕</button>
+                                
+                                <h3 className="text-3xl font-light gradient-text mb-6">{selectedExercise.name}</h3>
+                                
+                                <div className="space-y-6 text-gray-700">
+                                    {/* Beneficios */}
+                                    <div>
+                                        <h4 className="font-semibold text-lg mb-2">💪 {language === 'es' ? 'Beneficios' : 'Benefits'}</h4>
+                                        <p className="text-sm">{selectedExercise.benefits}</p>
+                                    </div>
+
+                                    {/* Ciencia */}
+                                    <div>
+                                        <h4 className="font-semibold text-lg mb-2">🧬 {language === 'es' ? 'La Ciencia Detrás' : 'The Science Behind'}</h4>
+                                        <p className="text-sm">{selectedExercise.science}</p>
+                                    </div>
+
+                                    {/* Instrucciones */}
+                                    <div>
+                                        <h4 className="font-semibold text-lg mb-2">📋 {language === 'es' ? 'Instrucciones' : 'Instructions'}</h4>
+                                        <p className="text-sm bg-blue-50 p-3 rounded-lg">{selectedExercise.instructions}</p>
+                                    </div>
+
+                                    {/* Pasos Detallados */}
+                                    <div>
+                                        <h4 className="font-semibold text-lg mb-3">{language === 'es' ? 'Pasos Detallados' : 'Step-by-Step'}</h4>
+                                        <ol className="space-y-2">
+                                            {selectedExercise.steps.map((step, idx) => (
+                                                <li key={idx} className="text-sm pl-4 border-l-2 border-purple-300">{step}</li>
+                                            ))}
+                                        </ol>
+                                    </div>
+
+                                    {/* Restricciones si las hay */}
+                                    {selectedExercise.restrictions.length > 0 && (
+                                        <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
+                                            <h4 className="font-semibold text-yellow-900 mb-2">⚠️ {language === 'es' ? 'Restricciones de Salud' : 'Health Restrictions'}</h4>
+                                            <p className="text-sm text-yellow-800">
+                                                {language === 'es' 
+                                                    ? `Este ejercicio tiene restricciones para: ${selectedExercise.restrictions.join(', ')}. Consulta con tu médico si tienes estas condiciones.`
+                                                    : `This exercise has restrictions for: ${selectedExercise.restrictions.join(', ')}. Consult your doctor if you have these conditions.`}
+                                            </p>
+                                        </div>
+                                    )}
+
+                                    {/* Duración */}
+                                    <div className="bg-purple-50 p-4 rounded-lg">
+                                        <p className="text-sm"><strong>{language === 'es' ? 'Duración Recomendada:' : 'Recommended Duration:'}</strong> {selectedExercise.duration} minutos</p>
+                                    </div>
+                                </div>
+
+                                <button onClick={() => setSelectedExercise(null)} className="w-full mt-6 bg-gray-200 text-gray-800 py-2 rounded-lg hover:bg-gray-300">
+                                    {language === 'es' ? 'Cerrar' : 'Close'}
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                );
+            };
+
+            const renderSymptoms = () => (
+                <div className="space-y-6 pb-24">
+                    <h2 className="text-3xl font-light gradient-text mb-6">{t[language].symptoms_label}</h2>
+
+                    {!showSymptomLogger ? (
+                        <button onClick={() => setShowSymptomLogger(true)} className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-lg hover:from-purple-700 hover:to-pink-700 font-semibold">
+                            {t[language].record_today}
+                        </button>
+                    ) : (
+                        <div className="p-6 bg-white rounded-xl shadow-md">
+                            <h3 className="font-semibold text-gray-800 mb-4">{t[language].how_you_feel}</h3>
+                            <div className="space-y-4 mb-4">
+                                {Object.entries(symptomValues).map(([key, val]) => (
+                                    <div key={key}>
+                                        <div className="flex justify-between mb-2">
+                                            <label className="text-sm font-semibold text-gray-700">{symptomLabels[key][language]}</label>
+                                            <span className="text-pink-600 font-semibold">{val}/10</span>
+                                        </div>
+                                        <input type="range" min="0" max="10" value={val} onChange={(e) => setSymptomValues({ ...symptomValues, [key]: parseInt(e.target.value) })} className="w-full" />
+                                    </div>
+                                ))}
+                            </div>
+                            <div className="flex gap-3">
+                                <button onClick={() => { updateProfile({ symptoms: symptomValues }); setShowSymptomLogger(false); }} className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white py-2 rounded-lg hover:from-purple-700 hover:to-pink-700">
+                                    {t[language].save}
+                                </button>
+                                <button onClick={() => setShowSymptomLogger(false)} className="flex-1 bg-gray-200 text-gray-800 py-2 rounded-lg hover:bg-gray-300">
+                                    {t[language].cancel}
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    <div className="grid gap-3">
+                        {Object.entries(symptomValues).map(([key, val]) => (
+                            <div key={key} className="p-4 bg-white rounded-xl shadow-md">
+                                <div className="flex justify-between items-start mb-2">
+                                    <h4 className="font-semibold text-gray-800">{symptomLabels[key][language]}</h4>
+                                    <span className={`text-2xl font-light ${val > 5 ? 'text-red-600' : val > 2 ? 'text-yellow-600' : 'text-green-600'}`}>{val}/10</span>
+                                </div>
+                                <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                                    <div className={`h-full ${val > 5 ? 'bg-red-600' : val > 2 ? 'bg-yellow-600' : 'bg-green-600'}`} style={{ width: `${val * 10}%` }} />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+
+            const renderMyths = () => (
+                <div className="space-y-6 pb-24">
+                    <h2 className="text-3xl font-light gradient-text mb-6">Mitos vs Ciencia</h2>
+
+                    <input type="text" placeholder={t[language].search_myth} value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-purple-400" />
+
+                    <div className="space-y-3">
+                        {myths.map((item, idx) => (
+                            <div key={idx} className="p-4 bg-white rounded-xl shadow-md cursor-pointer" onClick={() => setExpandedItem(expandedItem === `myth${idx}` ? null : `myth${idx}`)}>
+                                <h4 className="font-semibold text-gray-800 text-sm mb-2">{item.myth}</h4>
+                                <p className="text-sm text-purple-600 font-semibold">✓ {item.shortReality}</p>
+                                {expandedItem === `myth${idx}` && (
+                                    <div className="mt-3 pt-3 border-t border-gray-200 text-xs text-gray-700 space-y-2">
+                                        <p>{item.fullReality}</p>
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+
+            const renderTips = () => (
+                <div className="space-y-6 pb-24">
+                    <h2 className="text-3xl font-light gradient-text mb-6">Consejos Prácticos</h2>
+
+                    <div className="space-y-3">
+                        {tips.map((tip, idx) => (
+                            <div key={idx} className="p-4 bg-white rounded-xl shadow-md cursor-pointer" onClick={() => setExpandedItem(expandedItem === `tip${idx}` ? null : `tip${idx}`)}>
+                                <h4 className="font-semibold text-gray-800 text-sm mb-1">{tip.title}</h4>
+                                <p className="text-sm text-gray-600">{tip.content}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+
+            const renderCommunity = () => (
+                <div className="space-y-6 pb-24">
+                    <h2 className="text-3xl font-light gradient-text mb-6">Comunidad</h2>
+
+                    <button onClick={() => setShowStoryModal(true)} className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-lg hover:from-purple-700 hover:to-pink-700 font-semibold">
+                        {t[language].share_story}
+                    </button>
+
+                    {showStoryModal && (
+                        <div className="p-6 bg-white rounded-xl shadow-md">
+                            <input type="text" placeholder={t[language].story_title} value={storyTitle} onChange={(e) => setStoryTitle(e.target.value)} className="w-full border-2 border-gray-300 rounded-lg px-4 py-2 mb-3 focus:outline-none focus:border-purple-400" />
+                            <textarea placeholder={t[language].story_content} value={storyContent} onChange={(e) => setStoryContent(e.target.value)} className="w-full border-2 border-gray-300 rounded-lg px-4 py-2 h-24 mb-3 focus:outline-none focus:border-purple-400" />
+                            <div className="flex gap-3">
+                                <button onClick={() => { setStoryTitle(''); setStoryContent(''); setShowStoryModal(false); }} className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white py-2 rounded-lg hover:from-purple-700 hover:to-pink-700">
+                                    {language === 'es' ? 'Publicar' : 'Publish'}
+                                </button>
+                                <button onClick={() => setShowStoryModal(false)} className="flex-1 bg-gray-200 text-gray-800 py-2 rounded-lg hover:bg-gray-300">
+                                    {t[language].cancel}
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+
+            // NEW: RENDER PERIOD TRACKING
+            const renderPeriod = () => (
+                <div className="space-y-6 pb-24">
+                    <h2 className="text-3xl font-light gradient-text mb-6">{language === 'es' ? '📅 Mi Período' : '📅 My Period'}</h2>
+
+                    <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl border-2 border-purple-200 p-6">
+                        <h3 className="text-xl font-light gradient-text mb-4">{language === 'es' ? 'Registrar Hoy' : 'Register Today'}</h3>
+                        
+                        <div className="space-y-4">
+                            <input 
+                                type="date" 
+                                value={periodForm.date} 
+                                onChange={(e) => setPeriodForm({...periodForm, date: e.target.value})}
+                                className="w-full p-2 border border-gray-300 rounded-lg"
+                            />
+                            
+                            <div>
+                                <label className="block text-sm font-semibold mb-2">{language === 'es' ? 'Flujo' : 'Flow'}</label>
+                                <select 
+                                    value={periodForm.flow}
+                                    onChange={(e) => setPeriodForm({...periodForm, flow: e.target.value})}
+                                    className="w-full p-2 border border-gray-300 rounded-lg"
+                                >
+                                    <option value="light">{language === 'es' ? 'Ligero' : 'Light'}</option>
+                                    <option value="moderate">{language === 'es' ? 'Moderado' : 'Moderate'}</option>
+                                    <option value="heavy">{language === 'es' ? 'Abundante' : 'Heavy'}</option>
+                                </select>
+                            </div>
+
+                            <button 
+                                onClick={() => {
+                                    setPeriodTracking({...periodTracking, [periodForm.date]: periodForm.flow});
+                                    setPeriodForm({date: new Date().toISOString().split('T')[0], flow: 'moderate', symptoms: []});
+                                }}
+                                className="w-full py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 font-semibold"
+                            >
+                                {language === 'es' ? 'Guardar' : 'Save'}
+                            </button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 className="text-xl font-light gradient-text mb-4">{language === 'es' ? 'Últimos Registros' : 'Recent Logs'}</h3>
+                        {Object.keys(periodTracking).length === 0 ? (
+                            <p className="text-gray-600">{language === 'es' ? 'Sin registros aún' : 'No logs yet'}</p>
+                        ) : (
+                            <div className="space-y-3">
+                                {Object.entries(periodTracking).sort().reverse().map(([date, flow]) => (
+                                    <div key={date} className="p-4 bg-white rounded-lg shadow-md border-l-4 border-purple-600">
+                                        <p className="font-semibold text-gray-800">{date}</p>
+                                        <p className="text-sm text-gray-600">
+                                            {flow === 'light' && language === 'es' ? 'Flujo Ligero' : flow === 'light' && 'Light Flow'}
+                                            {flow === 'moderate' && language === 'es' ? 'Flujo Moderado' : flow === 'moderate' && 'Moderate Flow'}
+                                            {flow === 'heavy' && language === 'es' ? 'Flujo Abundante' : flow === 'heavy' && 'Heavy Flow'}
+                                        </p>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+
+                    <button 
+                        onClick={() => {
+                            const csvContent = "data:text/csv;charset=utf-8," + encodeURIComponent(
+                                "Fecha,Flujo\n" + Object.entries(periodTracking).map(([d, f]) => `${d},${f}`).join('\n')
+                            );
+                            const link = document.createElement('a');
+                            link.setAttribute('href', csvContent);
+                            link.setAttribute('download', 'periodo.csv');
+                            link.click();
+                        }}
+                        className="w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold"
+                    >
+                        {language === 'es' ? '📥 Descargar CSV' : '📥 Download CSV'}
+                    </button>
+                </div>
+            );
+
+            // NEW: RENDER RESOURCES (WORKSHOPS & CONSULTS)
+            const renderResources = () => (
+                <div className="space-y-6 pb-24">
+                    <h2 className="text-3xl font-light gradient-text mb-6">{language === 'es' ? '🎓 Talleres & Consultas' : '🎓 Workshops & Consults'}</h2>
+
+                    <div>
+                        <h3 className="text-xl font-light gradient-text mb-4">{language === 'es' ? 'Próximos Webinars y Talleres' : 'Upcoming Webinars & Workshops'}</h3>
+                        <div className="grid gap-4">
+                            {workshops.map(w => (
+                                <div key={w.id} className="p-4 bg-white rounded-lg shadow-md border-l-4 border-purple-600">
+                                    <div className="flex justify-between items-start mb-2">
+                                        <h4 className="font-semibold text-gray-800">{language === 'es' ? w.name_es : w.name_en}</h4>
+                                        <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded">{w.type === 'webinar' ? '📹' : '📖'}</span>
+                                    </div>
+                                    <p className="text-sm text-gray-600">📅 {w.date} at {w.time}</p>
+                                    <p className="text-sm text-gray-600">⏱️ {w.duration}</p>
+                                    <button className="mt-3 px-4 py-1 bg-purple-600 text-white rounded text-sm hover:bg-purple-700">
+                                        {language === 'es' ? 'Inscribirse' : 'Register'}
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            );
+
+            // NEW: RENDER MEDICAL CONSULTS
+            const renderMedicalConsults = () => (
+                <div className="space-y-6 pb-24">
+                    <h2 className="text-3xl font-light gradient-text mb-6">{language === 'es' ? '👨‍⚕️ Consultas Médicas' : '👨‍⚕️ Medical Consults'}</h2>
+
+                    {showConsultForm && (
+                        <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl border-2 border-purple-200 p-6">
+                            <h3 className="text-lg font-light gradient-text mb-4">{language === 'es' ? 'Nueva Consulta' : 'New Consult'}</h3>
+                            <input type="date" value={consultForm.date} onChange={(e) => setConsultForm({...consultForm, date: e.target.value})} className="w-full p-2 border border-gray-300 rounded-lg mb-3" />
+                            <input type="text" placeholder={language === 'es' ? 'Nombre del Médico' : 'Doctor Name'} value={consultForm.doctorName} onChange={(e) => setConsultForm({...consultForm, doctorName: e.target.value})} className="w-full p-2 border border-gray-300 rounded-lg mb-3" />
+                            <input type="text" placeholder={language === 'es' ? 'Especialidad' : 'Specialty'} value={consultForm.specialty} onChange={(e) => setConsultForm({...consultForm, specialty: e.target.value})} className="w-full p-2 border border-gray-300 rounded-lg mb-3" />
+                            <textarea placeholder={language === 'es' ? 'Notas de la consulta' : 'Consult Notes'} value={consultForm.notes} onChange={(e) => setConsultForm({...consultForm, notes: e.target.value})} className="w-full p-2 border border-gray-300 rounded-lg mb-3" rows="3"></textarea>
+                            <div className="flex gap-3">
+                                <button 
+                                    onClick={() => {
+                                        setMedicalConsults([...medicalConsults, {...consultForm, id: Date.now()}]);
+                                        setConsultForm({date: new Date().toISOString().split('T')[0], doctorName: '', specialty: '', notes: '', nextDate: ''});
+                                        setShowConsultForm(false);
+                                    }}
+                                    className="flex-1 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-semibold"
+                                >
+                                    {language === 'es' ? 'Guardar' : 'Save'}
+                                </button>
+                                <button onClick={() => setShowConsultForm(false)} className="flex-1 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400">
+                                    {language === 'es' ? 'Cancelar' : 'Cancel'}
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    <button onClick={() => setShowConsultForm(true)} className="w-full py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 font-semibold">
+                        + {language === 'es' ? 'Nueva Consulta' : 'New Consult'}
+                    </button>
+
+                    <div>
+                        <h3 className="text-lg font-light gradient-text mb-4">{language === 'es' ? 'Mis Consultas' : 'My Consults'}</h3>
+                        {medicalConsults.length === 0 ? (
+                            <p className="text-gray-600">{language === 'es' ? 'Sin consultas registradas' : 'No consults registered'}</p>
+                        ) : (
+                            <div className="space-y-3">
+                                {medicalConsults.map(c => (
+                                    <div key={c.id} className="p-4 bg-white rounded-lg shadow-md border-l-4 border-purple-600">
+                                        <p className="font-semibold text-gray-800">{c.doctorName} - {c.specialty}</p>
+                                        <p className="text-sm text-gray-600">📅 {c.date}</p>
+                                        {c.notes && <p className="text-sm text-gray-700 mt-2">{c.notes}</p>}
+                                        <button 
+                                            onClick={() => {
+                                                const pdfContent = `CONSULTA MÉDICA\n\nMédico: ${c.doctorName}\nEspecialidad: ${c.specialty}\nFecha: ${c.date}\n\nNotas:\n${c.notes}\n\nPerfil:\nEdad: ${currentProfile.age}\nPeso: ${currentProfile.weight}kg\nAltura: ${currentProfile.height}cm\nCondiciones: ${currentProfile.healthConditions?.join(', ') || 'N/A'}`;
+                                                const link = document.createElement('a');
+                                                link.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(pdfContent);
+                                                link.download = `consulta-${c.id}.txt`;
+                                                link.click();
+                                            }}
+                                            className="mt-3 px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+                                        >
+                                            {language === 'es' ? '📥 Descargar' : '📥 Download'}
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+
+            const renderContent = () => {
+                switch (currentPage) {
+                    case 'dashboard': return renderDashboard();
+                    case 'nutrition': return renderNutrition();
+                    case 'exercise': return renderExercise();
+                    case 'period': return renderPeriod();
+                    case 'resources': return renderResources();
+                    case 'medical': return renderMedicalConsults();
+                    case 'symptoms': return renderSymptoms();
+                    case 'myths': return renderMyths();
+                    case 'tips': return renderTips();
+                    case 'community': return renderCommunity();
+                    default: return <div />;
+                }
+            };
+
+            return (
+                <div className={`min-h-screen ${darkMode ? 'bg-slate-900' : 'bg-slate-50'}`}>
+                    <header className={`sticky top-0 z-50 ${cardBg} shadow-md border-b-2 ${darkMode ? 'border-slate-700' : 'border-gray-200'}`}>
+                        <div className="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+                            <h1 className="text-3xl font-light gradient-text">{t[language].app_name}</h1>
+                            <div className="flex gap-3 items-center">
+                                <div className="flex gap-1 bg-gray-200 dark:bg-slate-700 rounded-full p-1">
+                                    <button onClick={() => { setLanguage('es'); localStorage.setItem('luminaLang', 'es'); }} className={`px-3 py-1 rounded-full text-xs font-semibold transition ${language === 'es' ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white' : darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                                        ES
+                                    </button>
+                                    <button onClick={() => { setLanguage('en'); localStorage.setItem('luminaLang', 'en'); }} className={`px-3 py-1 rounded-full text-xs font-semibold transition ${language === 'en' ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white' : darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                                        EN
+                                    </button>
+                                </div>
+                                <button onClick={() => setDarkMode(!darkMode)} className="text-xl">{darkMode ? '☀️' : '🌙'}</button>
+                                <button onClick={() => setShowSources(true)} className="px-3 py-1 bg-blue-500 text-white rounded-lg text-xs hover:bg-blue-600">
+                                    📚 {language === 'es' ? 'Fuentes' : 'Sources'}
+                                </button>
+                                <button onClick={() => setShowPaywall(true)} className="px-3 py-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg text-xs hover:shadow-lg">
+                                    ⭐ {language === 'es' ? 'PRO' : 'PRO'}
+                                </button>
+                                <button onClick={handleLogout} className="px-3 py-1 bg-red-500 text-white rounded-lg text-xs hover:bg-red-600">
+                                    {t[language].logout}
+                                </button>
+                            </div>
+                        </div>
+                    </header>
+
+                    <main className="max-w-6xl mx-auto px-4 py-6">
+                        {renderContent()}
+                    </main>
+
+                    <nav className="fixed bottom-0 left-0 right-0 border-t-2 bg-white dark:bg-slate-800 shadow-lg">
+                        <div className="max-w-6xl mx-auto flex justify-around overflow-x-auto">
+                            {[
+                                { page: 'dashboard', label: t[language].dashboard },
+                                { page: 'nutrition', label: t[language].nutrition },
+                                { page: 'exercise', label: t[language].exercise },
+                                { page: 'period', label: t[language].period },
+                                { page: 'resources', label: t[language].resources },
+                                { page: 'medical', label: t[language].medical_consults },
+                                { page: 'symptoms', label: t[language].symptoms },
+                                { page: 'myths', label: t[language].myths },
+                                { page: 'tips', label: t[language].tips },
+                                { page: 'community', label: t[language].community }
+                            ].map((item) => (
+                                <button key={item.page} onClick={() => setCurrentPage(item.page)} className={`flex-1 min-w-max py-4 px-3 transition border-t-4 ${currentPage === item.page ? 'border-gradient-to-r from-purple-600 to-pink-600 bg-purple-50 dark:bg-slate-700 text-purple-600' : darkMode ? 'border-slate-700 text-gray-400' : 'border-gray-200 text-gray-600'}`}>
+                                    <span className="text-sm font-medium">{item.label}</span>
+                                </button>
+                            ))}
+                        </div>
+                    </nav>
+
+                    {/* PAYWALL MODAL - PRO SUBSCRIPTION */}
+                    {showPaywall && (
+                        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+                            <div className="bg-white rounded-2xl max-w-md w-full p-8 shadow-2xl">
+                                <h3 className="text-2xl font-light gradient-text mb-4">
+                                    {language === 'es' ? '✨ Desbloquea Lumina PRO' : '✨ Unlock Lumina PRO'}
+                                </h3>
+                                <p className="text-gray-600 mb-6 text-sm">
+                                    {language === 'es' 
+                                        ? 'Acceso a análisis de patrones IA, planes semanales personalizados, videos guiados y chat con nutricionista.'
+                                        : 'Access AI pattern analysis, personalized weekly plans, guided videos and nutritionist chat.'}
+                                </p>
+                                <div className="bg-purple-50 rounded-lg p-4 mb-6">
+                                    <p className="font-semibold text-purple-900">€9.99/mes</p>
+                                    <p className="text-xs text-purple-700">{language === 'es' ? 'O €99/año' : 'Or €99/year'}</p>
+                                </div>
+                                <div className="flex gap-3">
+                                    <button onClick={activatePro} className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-lg font-semibold hover:shadow-lg">
+                                        {language === 'es' ? 'Activar PRO' : 'Activate PRO'}
+                                    </button>
+                                    <button onClick={() => setShowPaywall(false)} className="flex-1 bg-gray-200 text-gray-800 py-3 rounded-lg hover:bg-gray-300">
+                                        {t[language].cancel}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* SOURCES MODAL - SCIENTIFIC PAPERS */}
+                    {showSources && (
+                        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+                            <div className="bg-white rounded-2xl max-w-2xl w-full p-8 shadow-2xl max-h-[80vh] overflow-y-auto">
+                                <button onClick={() => setShowSources(false)} className="absolute top-4 right-4 text-2xl text-gray-500">✕</button>
+                                <h3 className="text-2xl font-light gradient-text mb-6">
+                                    {language === 'es' ? '📚 Fuentes Científicas' : '📚 Scientific Sources'}
+                                </h3>
+                                <div className="space-y-4">
+                                    {scientificSources.map((source, idx) => (
+                                        <div key={idx} className="border-l-4 border-purple-400 pl-4 py-3">
+                                            <h4 className="font-semibold text-gray-800">{source.title}</h4>
+                                            <p className="text-xs text-gray-600 mt-1">
+                                                {source.authors} • {source.journal} ({source.year})
+                                            </p>
+                                            <p className="text-sm text-gray-700 mt-2">{source.summary}</p>
+                                            <a href={`https://doi.org/${source.doi}`} target="_blank" rel="noopener noreferrer" className="text-xs text-purple-600 hover:underline mt-2 block">
+                                                DOI: {source.doi}
+                                            </a>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* CONSENT BANNER - GDPR */}
+                    {!consentGiven && (
+                        <div className="fixed bottom-0 left-0 right-0 bg-gray-900 text-white p-4 z-40">
+                            <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
+                                <p className="text-sm">
+                                    {language === 'es' 
+                                        ? '🔒 Respetamos tu privacidad. Tus datos se almacenan localmente y son tuyos.'
+                                        : '🔒 We respect your privacy. Your data is stored locally and is yours.'}
+                                </p>
+                                <div className="flex gap-2">
+                                    <button onClick={() => handleConsent(true)} className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 text-sm">
+                                        {language === 'es' ? 'Aceptar' : 'Accept'}
+                                    </button>
+                                    <button onClick={() => handleConsent(false)} className="px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-600 text-sm">
+                                        {language === 'es' ? 'Cancelar' : 'Decline'}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* PRO BADGE EN HEADER */}
+                    {isPro && (
+                        <div className="fixed top-4 right-4 z-40 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg">
+                            ⭐ PRO
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<LuminaApp />);
+    </script>
+</body>
+</html>
